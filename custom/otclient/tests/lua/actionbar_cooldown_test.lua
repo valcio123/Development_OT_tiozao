@@ -17,10 +17,22 @@ table.contains = function(t, value)
 end
 table.empty = function(t) return next(t) == nil end
 spellGroupCooldownCache = {}
-Spells = {
-    getCooldownByGroup = function(spell, group) return spell.group == group end,
-    getCooldownBySecondaryGroup = function() return false end,
-}
+Spells = {}
+local spellFile = assert(io.open("modules/gamelib/spells.lua", "r"))
+local spellSource = spellFile:read("*a")
+spellFile:close()
+local helpersStart = assert(spellSource:find("function Spells.getCooldownByGroup(", 1, true))
+local helpersEnd = assert(spellSource:find("function Spells.getIconFileByProfile(", helpersStart, true))
+assert(loadstring(spellSource:sub(helpersStart, helpersEnd - 1)))()
+assert(Spells.getCooldownByGroup({group = {[1] = 2000, [3] = 1000}}, 1) == 2000)
+assert(Spells.getCooldownBySecondaryGroup({group = {[1] = 2000, [3] = 1000}}, 3) == 1000)
+assert(Spells.getCooldownByGroup({group = 1, exhaustion = 2000}, 1) == 2000)
+assert(Spells.getCooldownBySecondaryGroup({group = 1, exhaustion = 2000}, 1) == nil)
+assert(Spells.getCooldownByGroup({}, 1) == nil)
+assert(Spells.getGroupIds({group = 1})[1] == 1)
+assert(Spells.getPrimaryGroup({group = 1}) == 1)
+assert(Spells.getPrimaryGroup({group = {[1] = 2000, [3] = 1000}}) == 1)
+assert(Spells.getPrimaryGroup({}) == -1)
 getButtonCache = function(button) return button.cache end
 updateButtonState = function() end
 schedulePendingMultiButtonUpdate = function() end
@@ -31,7 +43,7 @@ updateCooldown = function(button, delay) button.duration = delay; button.elapsed
 
 local function button(category, isRune, group)
     local b = {duration = 0, elapsed = 0, cache = {itemId = 3191, isRuneSpell = isRune}}
-    if group then b.cache.spellData = {group = group} end
+    if group then b.cache.spellData = {group = group, exhaustion = 2000} end
     b.isDestroyed = function() return b.destroyed or false end
     b.cooldown = {
         getDuration = function() return b.duration end,

@@ -537,6 +537,10 @@ function Spells.filterSpellsByGroups(spells, groups)
 end
 
 function Spells.getCooldownByGroup(spellData, groupId)
+    if type(spellData.group) == "number" then
+        return spellData.group == groupId and spellData.exhaustion or nil
+    end
+    if type(spellData.group) ~= "table" then return nil end
     local keys = {}
     for k in pairs(spellData.group) do
         table.insert(keys, k)
@@ -553,6 +557,8 @@ function Spells.getCooldownByGroup(spellData, groupId)
 end
 
 function Spells.getCooldownBySecondaryGroup(spellData, groupId)
+    -- Rune data has one numeric group and no secondary group.
+    if type(spellData.group) ~= "table" then return nil end
     local keys = {}
     for k in pairs(spellData.group) do
         table.insert(keys, k)
@@ -569,6 +575,8 @@ function Spells.getCooldownBySecondaryGroup(spellData, groupId)
 end
 
 function Spells.getGroupIds(spell)
+    if type(spell.group) == "number" then return {spell.group} end
+    if type(spell.group) ~= "table" then return {} end
     local groups = {}
     for k, _ in pairs(spell.group) do
         table.insert(groups, k)
@@ -577,6 +585,8 @@ function Spells.getGroupIds(spell)
 end
 
 function Spells.getPrimaryGroup(spell)
+    if type(spell.group) == "number" then return spell.group end
+    if type(spell.group) ~= "table" then return -1 end
     local indexes = {}
     for k in pairs(spell.group) do
         table.insert(indexes, k)
