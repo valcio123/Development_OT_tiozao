@@ -1,0 +1,84 @@
+local config = {
+	vipOnly = false, -- Set to true to require VIP; no items or charges are consumed.
+	interval = 1000,
+}
+
+local preferenceKey = "talkaction.goldconverter.enabled"
+
+local function canConvert(player)
+	return player:kv():get(preferenceKey) == true and (not config.vipOnly or player:isVip())
+end
+
+local function convertItem(item, fromId, toId)
+	if item:getId() == fromId and item:getCount() == 100 then
+		-- Transform the existing stack atomically instead of removing money first.
+		item:transform(toId, 1)
+	end
+end
+
+local function convertContainer(container, fromId, toId)
+	for _, item in ipairs(container:getItems(true)) do
+		convertItem(item, fromId, toId)
+	end
+end
+
+local function convertCoins(player)
+	if not canConvert(player) then
+		return
+	end
+
+	-- Finish gold first so newly completed platinum stacks can become crystal.
+	for _, currency in ipairs({
+		{ ITEM_GOLD_COIN, ITEM_PLATINUM_COIN },
+		{ ITEM_PLATINUM_COIN, ITEM_CRYSTAL_COIN },
+	}) do
+		for slot = CONST_SLOT_HEAD, CONST_SLOT_AMMO do
+			local item = player:getSlotItem(slot)
+			if item then
+				if item:isContainer() then
+					convertContainer(item, currency[1], currency[2])
+				else
+					convertItem(item, currency[1], currency[2])
+				end
+			end
+		end
+		local inbox = player:getStoreInbox()
+		if inbox then
+			convertContainer(inbox, currency[1], currency[2])
+		end
+	end
+end
+
+local command = TalkAction("!goldconverter")
+
+function command.onSay(player, words, param)
+	param = param:trim():lower()
+	if param ~= "on" and param ~= "off" then
+		player:sendCancelMessage("Usage: !goldconverter on/off")
+		return true
+	end
+	if param == "on" and config.vipOnly and not player:isVip() then
+		player:sendCancelMessage("You need VIP to use the gold converter.")
+		return true
+	end
+	player:kv():set(preferenceKey, param == "on")
+	convertCoins(player)
+	player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Gold converter " .. param .. ".")
+	return true
+end
+
+command:separator(" ")
+command:groupType("normal")
+command:register()
+
+local converter = GlobalEvent("FreeGoldConverter")
+
+function converter.onThink(interval)
+	for _, player in ipairs(Game.getPlayers()) do
+		convertCoins(player)
+	end
+	return true
+end
+
+converter:interval(config.interval)
+converter:register()

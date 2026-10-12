@@ -11,3 +11,16 @@ configure_log.txt
 /custom/canary/config.lua
 /custom/canary/create_tiozao_account.sql
 /custom/canary/.agents/
+
+# Snapshot local completo do Canary: backups e material privado ficam locais.
+*.old
+*.old.*
+/custom/canary/config.lua_old*
+/custom/canary/key.pem
+/custom/canary/cache/
+/custom/canary/data/scripts/talkactions/player/.tools/
+/custom/canary/data/scripts/talkactions/player/.vs/
+
+# Copias acidentais de metadados e gravacoes locais.
+/custom/canary/data/scripts/talkactions/player/.github/
+/custom/otclient/records/*.cam
