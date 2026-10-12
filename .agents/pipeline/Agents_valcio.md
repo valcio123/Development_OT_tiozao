@@ -60,3 +60,8 @@ The global Git, commit, PR, C++ header, exception, and documentation policies ap
 - Keep Monk and Exalted Monk characters unchanged in the database and visible in account character lists. Traditional mode must reject their world login cleanly with an explanatory client message before placement or gameplay initialization. Never delete, convert, or hide them. Modern mode restores login. Validate both vocations and mode transitions without crashes.
 - Traditional mode blocks healing and mixed potions, higher-tier mana potions, and special healing foods. Keep ordinary mana potions on separate item exhaustion and ordinary foods for regeneration. Filter NPC trade without deleting original catalogs; modern mode restores them.
 - The user selected the Nostalrius UH formula: min = max = 2.5 * max(100, 2 * level + 3 * magicLevel), applied only in traditional mode. Preserve the modern formula. Consider client cooldown displays and bot behavior as well as authoritative server enforcement.
+## Authorized Git workflow
+
+- User preference recorded on 2026-10-12: after completing and validating authorized changes, create a commit and publish it with a normal Git push automatically, without requesting confirmation again.
+- Continue on the working branch (currently `Development`) unless the user requests another branch. Preserve private configuration, secrets, backups and local build artifacts outside version control.
+- This authorization does not request merges, releases, force pushes or deployment. Report the commit and push result, including any blocker.
