@@ -835,10 +835,10 @@ int32_t Spell::calculateAugmentSpellCooldownReduction(const std::shared_ptr<Play
 
 void Spell::applyCooldownConditions(const std::shared_ptr<Player> &player) const {
 	if (!g_configManager().getBoolean(MODERN_COMBAT_SYSTEM)) {
-		player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, CombatMode::traditionalCooldownMs, 0, false, m_spellId));
+		player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLCOOLDOWN, CombatMode::traditionalCooldown(group == SPELLGROUP_HEALING), 0, false, m_spellId));
 		// Three standard groups keep client icons consistent with the shared server gate.
 		for (auto sharedGroup : { SPELLGROUP_ATTACK, SPELLGROUP_HEALING, SPELLGROUP_SUPPORT }) {
-			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, CombatMode::traditionalCooldownMs, 0, false, sharedGroup));
+			player->addCondition(Condition::createCondition(CONDITIONID_DEFAULT, CONDITION_SPELLGROUPCOOLDOWN, CombatMode::traditionalCooldown(group == SPELLGROUP_HEALING), 0, false, sharedGroup));
 		}
 		return;
 	}
@@ -1085,7 +1085,7 @@ void Spell::setSecondaryGroup(SpellGroup_t g) {
 }
 
 uint32_t Spell::getCooldown() const {
-	return g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) ? cooldown : CombatMode::traditionalCooldownMs;
+	return g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) ? cooldown : CombatMode::traditionalCooldown(group == SPELLGROUP_HEALING);
 }
 
 void Spell::setCooldown(uint32_t cd) {
@@ -1093,7 +1093,7 @@ void Spell::setCooldown(uint32_t cd) {
 }
 
 uint32_t Spell::getSecondaryCooldown() const {
-	return g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) ? secondaryGroupCooldown : CombatMode::traditionalCooldownMs;
+	return g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) ? secondaryGroupCooldown : CombatMode::traditionalCooldown(group == SPELLGROUP_HEALING);
 }
 
 void Spell::setSecondaryCooldown(uint32_t cd) {
@@ -1101,7 +1101,7 @@ void Spell::setSecondaryCooldown(uint32_t cd) {
 }
 
 uint32_t Spell::getGroupCooldown() const {
-	return g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) ? groupCooldown : CombatMode::traditionalCooldownMs;
+	return g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) ? groupCooldown : CombatMode::traditionalCooldown(group == SPELLGROUP_HEALING);
 }
 
 void Spell::setGroupCooldown(uint32_t cd) {

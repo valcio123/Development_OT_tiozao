@@ -3,8 +3,8 @@
 ## Configuração
 
 `modernCombatSystem = true` mantém as regras existentes. `false` aplica as
-restrições tradicionais deste documento. O padrão e a configuração local
-continuam em `true`. A chave é lida na inicialização: mudar o arquivo e executar
+restrições tradicionais deste documento. O padrão é `true`; a configuração local
+está em `false`. A chave é lida na inicialização: mudar o arquivo e executar
 reload não troca o modo. É necessário um reinício controlado do servidor.
 
 O executável antigo não reconhece essa chave; é necessário compilar o código
@@ -13,12 +13,24 @@ o servidor inteiro, o mapa ou as fórmulas de dano para Tibia 7.4.
 
 ## Cooldown e magias
 
-Todas as magias e runas permitidas compartilham 2000 ms, incluindo cura,
-ataque, suporte, conjuração e comandos de casa. Depois de um uso bem-sucedido,
-as três condições padrão de grupo e a condição individual recebem 2000 ms.
+Todas as magias e runas permitidas compartilham uma exaustao determinada pela
+ultima acao: cura/UH (grupo healing) aplica 1000 ms; ataque, suporte, conjuracao
+e comandos de casa aplicam 2000 ms. Depois de um uso bem-sucedido, as tres
+condicoes padrao de grupo e a condicao individual recebem a mesma duracao.
+Exemplo: ataque -> 2s -> cura/UH -> 1s -> ataque. Nao sao grupos independentes.
 As condições de grupo também atualizam os indicadores do cliente. Taxa de
 cooldown, equipamento, Momentum, roda e limpeza de cooldown não reduzem esse
 intervalo no modo tradicional. Falhas não consomem a nova condição.
+
+Fix em 12/10/2026: a implementacao usava 2000 ms tambem para cura/UH. A politica
+central agora seleciona a duracao pelo grupo da magia e e usada tanto nas
+condicoes do servidor quanto nos getters de cooldown. Formulas e definicoes
+modernas permanecem preservadas. Referencia: o Nostalrius aplica a mesma condicao
+EXHAUST por 2000 ms apos acoes agressivas e 1000 ms apos nao agressivas, salvo
+override especifico: [spells.cpp](https://github.com/Ezzz-dev/Nostalrius/blob/master/src/spells.cpp).
+Nesta customizacao, suporte permanece em 2000 ms; a mudanca autorizada abrange
+cura e runas de cura. Teste de politica verifica 1000/2000 ms; sequencias e
+indicadores visuais ainda precisam de reteste em jogo.
 
 A política está em `src/creatures/combat/combat_mode.hpp`. O bloqueio ocorre
 antes do privilégio IgnoreSpellCheck. Os registros Lua originais permanecem

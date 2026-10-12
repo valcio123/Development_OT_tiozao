@@ -39,6 +39,8 @@ MODE_TEST(TraditionalPreservesOrdinaryManaAndFood) {
 }
 
 MODE_TEST(TraditionalRunesAreIndependentOfParalyzeWalking) {
+	MODE_EXPECT(CombatMode::traditionalCooldown(true) == 1000);
+	MODE_EXPECT(CombatMode::traditionalCooldown(false) == 2000);
 	MODE_EXPECT(!CombatMode::requiresWalkExhaustion(false, true, true));
 	MODE_EXPECT(CombatMode::requiresWalkExhaustion(true, true, true));
 	MODE_EXPECT(CombatMode::requiresWalkExhaustion(false, false, true));

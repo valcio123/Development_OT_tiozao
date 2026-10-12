@@ -17,6 +17,11 @@ namespace CombatMode {
 
 inline constexpr uint32_t traditionalCooldownMs = 2000;
 
+// The last cast sets the shared lock: healing/UH 1s, attack/support 2s.
+constexpr uint32_t traditionalCooldown(bool healing) {
+	return healing ? 1000 : traditionalCooldownMs;
+}
+
 constexpr bool sameSpellName(std::string_view left, std::string_view right) {
 	if (left.size() != right.size()) {
 		return false;

@@ -80,4 +80,20 @@ assert(gfb.cache.removeCooldownEvent.delay == 1000, "old group timer would remov
 gfb.destroyed = true
 gfb.cache.removeCooldownEvent.callback()
 assert(gfb.duration == 1000, "expired callback touched a destroyed button")
-print("Actionbar cooldown tests passed: GFB/UH group timers, packet overwrite and potion independence")
+-- Once the attack lock expires, a healing cast advertises 1s to every group.
+gfb.destroyed = false
+gfb.duration = 0
+uh.duration = 0
+onSpellGroupCooldown(1, 1000)
+onSpellGroupCooldown(2, 1000)
+assert(gfb.duration == 1000 and uh.duration == 1000, "healing shared lock must display 1s")
+gfb.elapsed = 100
+uh.elapsed = 100
+onMultiUseCooldown(1000)
+assert(gfb.duration == 1000 and uh.duration == 1000, "item packet changed healing lock duration")
+gfb.duration = 0
+uh.duration = 0
+onSpellGroupCooldown(1, 2000)
+onSpellGroupCooldown(2, 2000)
+assert(gfb.duration == 2000 and uh.duration == 2000, "next attack must restore the 2s shared lock")
+print("Actionbar cooldown tests passed: attack/healing shared timers, packet overwrite and potion independence")
