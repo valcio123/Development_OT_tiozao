@@ -400,7 +400,7 @@ ReturnValue Actions::internalUseItem(const std::shared_ptr<Player> &player, cons
 
 bool Actions::useItem(const std::shared_ptr<Player> &player, const Position &pos, uint8_t index, const std::shared_ptr<Item> &item, bool isHotkey) {
 	if (!CombatMode::isItemAvailable(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), item->getID())) {
-		player->sendCancelMessage("This item is unavailable in traditional combat mode.");
+		player->sendTraditionalItemUnavailable(item->getID());
 		return false;
 	}
 	const ItemType &it = Item::items[item->getID()];
@@ -437,7 +437,7 @@ bool Actions::useItem(const std::shared_ptr<Player> &player, const Position &pos
 
 bool Actions::useItemEx(const std::shared_ptr<Player> &player, const Position &fromPos, const Position &toPos, uint8_t toStackPos, const std::shared_ptr<Item> &item, bool isHotkey, const std::shared_ptr<Creature> &creature /* = nullptr*/) {
 	if (!CombatMode::isItemAvailable(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), item->getID())) {
-		player->sendCancelMessage("This item is unavailable in traditional combat mode.");
+		player->sendTraditionalItemUnavailable(item->getID());
 		return false;
 	}
 	const ItemType &it = Item::items[item->getID()];

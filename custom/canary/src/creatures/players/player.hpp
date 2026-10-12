@@ -9,6 +9,8 @@
 
 #pragma once
 
+#include <unordered_set>
+
 #include "creatures/creature.hpp"
 #include "enums/forge_conversion.hpp"
 #include "game/bank/bank.hpp"
@@ -1064,6 +1066,7 @@ public:
 	void onRemoveInventoryItem(const std::shared_ptr<Item> &item);
 
 	void sendCancelMessage(const std::string &msg) const;
+	void sendTraditionalItemUnavailable(uint16_t itemId);
 	void sendCancelMessage(ReturnValue message) const;
 	void sendCancelTarget() const;
 	void sendCancelWalk() const;
@@ -1583,6 +1586,8 @@ public:
 	bool isFoodActive(uint16_t itemId) const;
 
 private:
+	// Restricted item IDs are a bounded policy list; notify once per Player lifetime.
+	std::unordered_set<uint16_t> traditionalItemNotices;
 	friend class PlayerLock;
 	std::mutex mutex;
 

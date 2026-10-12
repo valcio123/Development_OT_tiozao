@@ -31,3 +31,7 @@ Any change touching client-assets auto-installation must preserve the runtime co
    - Explicitly state tested install paths and expected runtime load behavior.
 
 Reference: `docs/client-assets-auto-install.md`
+
+## Actionbar cooldown contract
+
+- A generic multi-use cooldown must not shorten an active spell/rune timer or restart a longer timer. Apply group cooldown packets to rune buttons too. When extending a timer, replace its pending removal event. Validate packet ordering and ordinary potion independence with `tests/lua/actionbar_cooldown_test.lua`.

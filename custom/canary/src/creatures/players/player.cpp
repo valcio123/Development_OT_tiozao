@@ -2114,6 +2114,12 @@ void Player::sendCancelMessage(const std::string &msg) const {
 	}
 }
 
+void Player::sendTraditionalItemUnavailable(uint16_t itemId) {
+	if (traditionalItemNotices.insert(itemId).second) {
+		sendCancelMessage(fmt::format("{} (item {}) is unavailable in traditional combat mode.", Item::items[itemId].name, itemId));
+	}
+}
+
 void Player::sendCancelMessage(ReturnValue message) const {
 	sendCancelMessage(getReturnMessage(message));
 }

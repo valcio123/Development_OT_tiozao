@@ -566,7 +566,7 @@ function onSpellGroupCooldown(groupId, delay)
                 end
             end
 
-            if cache and (not cache.isRuneSpell and cache.spellData) then
+            if cache and cache.spellData then
                 if Spells.getCooldownByGroup(cache.spellData, groupId) then
                     local resttime = button.cooldown:getDuration() - button.cooldown:getTimeElapsed()
                     if resttime < delay then
@@ -650,7 +650,19 @@ function onMultiUseCooldown(multiUseCooldown)
                 if item and item:isMultiUse() then
                     local marketArray = {MarketCategory.Potions, MarketCategory.Runes, MarketCategory.Tools}
                     if table.contains(marketArray, item:getMarketData().category) then
-                        updateCooldown(button, multiUseCooldown)
+                        -- Item-use packets must not shorten a spell/rune cooldown already received.
+                        local remaining = math.max(0, button.cooldown:getDuration() - button.cooldown:getTimeElapsed())
+                        if multiUseCooldown > remaining then
+                            updateCooldown(button, multiUseCooldown)
+                            if button.cache.removeCooldownEvent then
+                                removeEvent(button.cache.removeCooldownEvent)
+                            end
+                            button.cache.removeCooldownEvent = scheduleEvent(function()
+                                if not button:isDestroyed() then
+                                    removeCooldown(button)
+                                end
+                            end, multiUseCooldown)
+                        end
                     end
                 end
             end

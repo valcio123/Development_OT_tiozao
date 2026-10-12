@@ -743,7 +743,7 @@ void Npc::onPlayerBuyItem(const std::shared_ptr<Player> &player, uint16_t itemId
 	}
 
 	if (!CombatMode::isItemAvailable(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), itemId)) {
-		player->sendCancelMessage("This item is unavailable in traditional combat mode.");
+		player->sendTraditionalItemUnavailable(itemId);
 		return;
 	}
 

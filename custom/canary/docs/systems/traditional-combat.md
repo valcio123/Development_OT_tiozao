@@ -124,3 +124,17 @@ Nenhum servidor em execução foi reiniciado para validar esta alteração.
   local reutilizou suas dependências já instaladas, sem downloads de pacotes.
 - Testes GTest completos e validação em jogo não foram executados.
 - Nenhum banco foi alterado e nenhum processo do servidor original foi reiniciado.
+
+### Correção do primeiro teste em jogo
+
+- GFB (3191, great fireball rune) é permitida em ambos os modos e tem teste de regressão específico.
+- Avisos de item bloqueado agora identificam nome/ID e são enviados uma vez por item durante a vida da instância Player. Tentativas seguintes continuam bloqueadas, mas não renovam o aviso do cliente. A mensagem permite identificar qual item ou hotkey está realmente sendo recusado.
+- A actionbar do OTClient aplica cooldown de grupo também às runas. Pacotes genéricos de uso de itens não encurtam nem reiniciam um cooldown mais longo já ativo; uma extensão substitui o evento antigo de remoção.
+- Teste Lua `custom/otclient/tests/lua/actionbar_cooldown_test.lua` cobre GFB/UH, ordenação de pacotes, extensão de timer e independência da mana potion.
+- Aplicação: usar o novo executável Canary e atualizar o arquivo Lua da actionbar no cliente em uso, reiniciando o cliente. A retestagem visual em jogo continua necessária.
+
+O executável desta correção é gerado em `build/windows-release/bin/canary.exe`
+com a opção mantida `TOGGLE_BIN_FOLDER=ON`, pois o executável da raiz está em uso
+pelo teste. É necessário encerrar o servidor de forma controlada e iniciar o
+novo executável com `custom/canary` como diretório de trabalho; o cliente em uso
+também precisa ser reiniciado para carregar a actionbar corrigida.

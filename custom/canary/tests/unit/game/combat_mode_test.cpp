@@ -38,6 +38,13 @@ MODE_TEST(TraditionalPreservesOrdinaryManaAndFood) {
 	MODE_EXPECT(!CombatMode::isItemAvailable(false, 29415));
 }
 
+MODE_TEST(GreatFireballRemainsAvailableInBothModes) {
+	MODE_EXPECT(CombatMode::isItemAvailable(false, 3191));
+	MODE_EXPECT(CombatMode::isItemAvailable(true, 3191));
+	MODE_EXPECT(CombatMode::isSpellAvailable(false, "great fireball rune"));
+	MODE_EXPECT(CombatMode::isSpellAvailable(true, "great fireball rune"));
+}
+
 MODE_TEST(TraditionalRejectsBothMonkVocationsOnly) {
 	for (uint16_t id = 0; id <= 10; ++id) {
 		MODE_EXPECT(CombatMode::isVocationAvailable(false, id) == (id != 9 && id != 10));
@@ -61,6 +68,7 @@ MODE_TEST(AvailabilityHasNoSubstringOrCaseEscape) {
 int main() {
 	ModernRestoresEveryItemAndVocation();
 	TraditionalPreservesOrdinaryManaAndFood();
+	GreatFireballRemainsAvailableInBothModes();
 	TraditionalRejectsBothMonkVocationsOnly();
 	AvailabilityHasNoSubstringOrCaseEscape();
 }

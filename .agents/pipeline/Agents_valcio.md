@@ -65,3 +65,5 @@ The global Git, commit, PR, C++ header, exception, and documentation policies ap
 - User preference recorded on 2026-10-12: after completing and validating authorized changes, create a commit and publish it with a normal Git push automatically, without requesting confirmation again.
 - Continue on the working branch (currently `Development`) unless the user requests another branch. Preserve private configuration, secrets, backups and local build artifacts outside version control.
 - This authorization does not request merges, releases, force pushes or deployment. Report the commit and push result, including any blocker.
+- User preference: use a specific commit title describing the actual change, and update the Pull Request title/body for the reviewer with final scope, validation and remaining limitations before publishing.
+- Current publication path: push Development to fork/Development (valcio123/otzaodotio); PR #1 targets leoalvesjf/otzaodotio:main. No merge is authorized.
