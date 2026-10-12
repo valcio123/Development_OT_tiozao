@@ -1,0 +1,19 @@
+{
+  "verdict": "CHANGES_REQUESTED",
+  "findings": [
+    {"id": 1, "severity": "HIGH", "title": "mysqldump com '>' no PowerShell 5.1 gera dump UTF-16/blobs corrompidos", "fix": "Usar --result-file, --hex-blob e --default-character-set=utf8mb4; checar $LASTEXITCODE, os primeiros bytes e 'Dump completed'"},
+    {"id": 2, "severity": "MEDIUM", "title": "Falta a seção 'Como jogar' (RF8.2) em download.php", "fix": "Especificar h2 + ol com os 4 passos em pt-BR"},
+    {"id": 3, "severity": "MEDIUM", "title": "Checagem de warnings do AC 2 é vazia com display_errors=0", "fix": "O smoke compara o tamanho de php-error.log/app.log antes e depois e falha com linhas novas Warning/Notice/Deprecated/Fatal/CRITICAL"},
+    {"id": 4, "severity": "MEDIUM", "title": "Gatilho contraditório para o fallback /site", "fix": "Regra única: httpd -t falhou -> restaurar backup e tentar o fallback; falhou de novo -> restaurar e reportar; passou -> manter o vhost, e o fallback pós-restart fica documentado para o usuário"},
+    {"id": 5, "severity": "MEDIUM", "title": "Assinaturas de post_str/validate_*/rl_* indefinidas ou conflitantes; trim na senha indefinido", "fix": "Fixar as assinaturas (post_str sem trim/corte; validadores devolvem ?string; rl_*_at(dir,...) + wrappers); senha nunca passa por trim"},
+    {"id": 6, "severity": "MEDIUM", "title": "Falha de banco no layout sem regra (503 x '—'); ordem dados/render indefinida", "fix": "Páginas acessam o banco antes de render_header; widgets em try/catch mostram '—'; download.php nunca dá 503; db() guarda a falha"},
+    {"id": 7, "severity": "NIT", "title": "FOR UPDATE em email gera deadlock em vez de bloquear", "fix": "Mapear 1213/40001 para 'Este email já está cadastrado.'"},
+    {"id": 8, "severity": "NIT", "title": "Login por email não-único sem ORDER BY/LIMIT", "fix": "ORDER BY id LIMIT 1"},
+    {"id": 9, "severity": "NIT", "title": "gc_maxlifetime 1440 < session_idle 7200", "fix": "ini_set('session.gc_maxlifetime', session_idle)"},
+    {"id": 10, "severity": "NIT", "title": "Smoke não limpa o bucket register", "fix": "rl_clear('register','127.0.0.1') no início e no fim"},
+    {"id": 11, "severity": "NIT", "title": "httpd -t escreve no stderr (NativeCommandError no PS 5.1)", "fix": "Checar $LASTEXITCODE -eq 0 e 'Syntax OK' na saída combinada"},
+    {"id": 12, "severity": "NIT", "title": "Contagem de contas existentes (todas type 6) incorreta", "fix": "Corrigir o fato e listar no relatório as contas com permissão de publicar"},
+    {"id": 13, "severity": "NIT", "title": "Contraste do botão de login (~3,2:1) não garantido", "fix": "Usar .btn-ouro (bold >= 1.2rem) ou texto #2b1d10"},
+    {"id": 14, "severity": "NIT", "title": "Ponto online/offline do brief não especificado", "fix": "span.dot aria-hidden + texto Online/Offline"}
+  ]
+}

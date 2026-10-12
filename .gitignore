@@ -1,0 +1,13 @@
+# Clones upstream locais (pesados) - NAO versionar.
+# Somente as customizacoes em custom/ sao rastreadas neste repo.
+/canary/
+/otclient/
+
+# Logs e arquivos temporarios de build
+*.log
+configure_log.txt
+
+# Segredos e dados internos - NUNCA versionar (ficam so locais)
+/custom/canary/config.lua
+/custom/canary/create_tiozao_account.sql
+/custom/canary/.agents/
