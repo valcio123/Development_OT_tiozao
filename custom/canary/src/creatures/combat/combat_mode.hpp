@@ -56,6 +56,11 @@ constexpr bool isSpellAvailable(bool modern, std::string_view name) {
 	return false;
 }
 
+// Rune combat exhaustion is independent of paralyze step exhaustion in traditional mode.
+constexpr bool requiresWalkExhaustion(bool modern, bool isRune, bool triggersExhaustion) {
+	return triggersExhaustion && (modern || !isRune);
+}
+
 constexpr bool isVocationAvailable(bool modern, uint16_t vocationId) {
 	return modern || (vocationId != 9 && vocationId != 10);
 }

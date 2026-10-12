@@ -38,6 +38,15 @@ MODE_TEST(TraditionalPreservesOrdinaryManaAndFood) {
 	MODE_EXPECT(!CombatMode::isItemAvailable(false, 29415));
 }
 
+MODE_TEST(TraditionalRunesAreIndependentOfParalyzeWalking) {
+	MODE_EXPECT(!CombatMode::requiresWalkExhaustion(false, true, true));
+	MODE_EXPECT(CombatMode::requiresWalkExhaustion(true, true, true));
+	MODE_EXPECT(CombatMode::requiresWalkExhaustion(false, false, true));
+	MODE_EXPECT(CombatMode::requiresWalkExhaustion(true, false, true));
+	MODE_EXPECT(!CombatMode::requiresWalkExhaustion(false, false, false));
+	MODE_EXPECT(!CombatMode::requiresWalkExhaustion(true, false, false));
+}
+
 MODE_TEST(GreatFireballRemainsAvailableInBothModes) {
 	MODE_EXPECT(CombatMode::isItemAvailable(false, 3191));
 	MODE_EXPECT(CombatMode::isItemAvailable(true, 3191));
@@ -68,6 +77,7 @@ MODE_TEST(AvailabilityHasNoSubstringOrCaseEscape) {
 int main() {
 	ModernRestoresEveryItemAndVocation();
 	TraditionalPreservesOrdinaryManaAndFood();
+	TraditionalRunesAreIndependentOfParalyzeWalking();
 	GreatFireballRemainsAvailableInBothModes();
 	TraditionalRejectsBothMonkVocationsOnly();
 	AvailabilityHasNoSubstringOrCaseEscape();

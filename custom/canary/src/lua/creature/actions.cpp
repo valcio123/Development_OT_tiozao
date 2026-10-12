@@ -405,7 +405,7 @@ bool Actions::useItem(const std::shared_ptr<Player> &player, const Position &pos
 	}
 	const ItemType &it = Item::items[item->getID()];
 	bool canTriggerExhaustion = it.triggerExhaustion();
-	if (canTriggerExhaustion) {
+	if (CombatMode::requiresWalkExhaustion(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), it.isRune(), canTriggerExhaustion)) {
 		if (player->walkExhausted()) {
 			player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
 			return false;
@@ -442,7 +442,7 @@ bool Actions::useItemEx(const std::shared_ptr<Player> &player, const Position &f
 	}
 	const ItemType &it = Item::items[item->getID()];
 	bool canTriggerExhaustion = it.triggerExhaustion();
-	if (canTriggerExhaustion) {
+	if (CombatMode::requiresWalkExhaustion(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), it.isRune(), canTriggerExhaustion)) {
 		if (player->walkExhausted()) {
 			player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
 			return false;

@@ -138,3 +138,11 @@ com a opção mantida `TOGGLE_BIN_FOLDER=ON`, pois o executável da raiz está e
 pelo teste. É necessário encerrar o servidor de forma controlada e iniciar o
 novo executável com `custom/canary` como diretório de trabalho; o cliente em uso
 também precisa ser reiniciado para carregar a actionbar corrigida.
+
+### Movimento com paralyze
+
+No modo tradicional, runas de ataque e cura ignoram apenas a exaustão de passo
+do paralyze nos cinco pontos de entrada/execução do uso de itens. O personagem
+continua lento, e alcance, alvo, paredes, custos e cooldown de combate permanecem
+validados. A exaustão de itens/poções e o comportamento do modo moderno são preservados.
+O teste de política cobre a separação para runas e a preservação dos demais itens.

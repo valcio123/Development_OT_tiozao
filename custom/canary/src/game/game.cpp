@@ -14,6 +14,7 @@
 #include "creatures/appearance/attached_effects/attached_effects.hpp"
 #include "creatures/combat/condition.hpp"
 #include "creatures/combat/spells.hpp"
+#include "creatures/combat/combat_mode.hpp"
 #include "creatures/creature.hpp"
 #include "creatures/interactions/chat.hpp"
 #include "creatures/monsters/monster.hpp"
@@ -4617,7 +4618,7 @@ void Game::playerUseItemEx(uint32_t playerId, const Position &fromPos, uint8_t f
 
 	const ItemType &it = Item::items[item->getID()];
 	bool canTriggerExhaustion = it.triggerExhaustion();
-	if (canTriggerExhaustion) {
+	if (CombatMode::requiresWalkExhaustion(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), it.isRune(), canTriggerExhaustion)) {
 		if (player->walkExhausted()) {
 			player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
 			return;
@@ -4771,7 +4772,7 @@ void Game::playerUseItem(uint32_t playerId, const Position &pos, uint8_t stackPo
 
 	const ItemType &it = Item::items[item->getID()];
 	bool canTriggerExhaustion = it.triggerExhaustion();
-	if (canTriggerExhaustion) {
+	if (CombatMode::requiresWalkExhaustion(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), it.isRune(), canTriggerExhaustion)) {
 		if (player->walkExhausted()) {
 			player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
 			return;
@@ -4902,7 +4903,7 @@ void Game::playerUseWithCreature(uint32_t playerId, const Position &fromPos, uin
 
 	const ItemType &it = Item::items[item->getID()];
 	bool canTriggerExhaustion = it.triggerExhaustion();
-	if (canTriggerExhaustion) {
+	if (CombatMode::requiresWalkExhaustion(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), it.isRune(), canTriggerExhaustion)) {
 		if (player->walkExhausted()) {
 			player->sendCancelMessage(RETURNVALUE_YOUAREEXHAUSTED);
 			return;
