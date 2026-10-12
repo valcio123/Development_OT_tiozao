@@ -67,7 +67,8 @@ MODE_TEST(AvailabilityHasNoSubstringOrCaseEscape) {
 	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Fire Wave"));
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, "Ultimate Healing Extra"));
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, "Restoration"));
-	MODE_EXPECT(!CombatMode::isSpellAvailable(false, "Avalanche Rune"));
+	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Avalanche Rune"));
+	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Thunderstorm Rune"));
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, "Swift Jab"));
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, ""));
 	MODE_EXPECT(CombatMode::traditionalCooldownMs == 2000);

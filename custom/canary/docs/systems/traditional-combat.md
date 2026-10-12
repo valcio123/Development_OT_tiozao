@@ -38,7 +38,8 @@ Correspondências de nome incluem Antidote → Cure Poison; Invisible →
 Invisibility; Conjure Poison Arrow → Conjure Poisoned Arrow; nomes de runas
 passam a incluir o sufixo Rune. O Energy Wave conserva a implementação atual,
 cuja fórmula verbal mudou. Custos, vocações, níveis, cargas e efeitos existentes
-continuam como no Canary, exceto o cooldown.
+continuam como no Canary, exceto o cooldown e as formulas tradicionais de UH,
+GFB, Avalanche e Thunderstorm descritas neste documento.
 
 Não são liberadas automaticamente versões modernas de magias históricas com
 efeitos diferentes: Death Strike não substitui Force Strike; Rage of the Skies
@@ -46,7 +47,8 @@ não substitui Ultimate Explosion; Stalagmite não substitui Envenom; Wild Growt
 Rune não substitui a antiga magia instantânea Wild Growth. Essas correspondências
 exigem uma decisão posterior. Poison Storm e Undead Legion não têm implementação
 equivalente entre as magias instantâneas importadas. Magias não listadas ficam
-bloqueadas, incluindo Avalanche, strikes modernos, familiares e magias Monk.
+bloqueadas, incluindo strikes modernos, familiares e magias Monk. Avalanche e
+Thunderstorm foram liberadas por decisao explicita do usuario em 12/10/2026.
 
 ## Monk e personagens
 
@@ -138,6 +140,37 @@ com a opção mantida `TOGGLE_BIN_FOLDER=ON`, pois o executável da raiz está e
 pelo teste. É necessário encerrar o servidor de forma controlada e iniciar o
 novo executável com `custom/canary` como diretório de trabalho; o cliente em uso
 também precisa ser reiniciado para carregar a actionbar corrigida.
+
+### Area rune damage calibration (2026-10-12)
+
+User-approved traditional exceptions: Avalanche (3161) and Thunderstorm (3202)
+are available alongside Great Fireball (3191), with the shared 2000 ms exhaustion.
+These three runes share `getTraditionalAreaRuneDamage` in
+`data/libs/functions/combat.lua`: base = 2 * level + 3 * effective magic level;
+minimum = base * 0.35 * class factor; maximum = base * 0.65 * class factor.
+Factors: Sorcerer/Druid 1.00, Paladin 0.75, Knight 0.60. Base vocation IDs cover
+promotions. The callback returns negative values for damage; integer conversion
+and subsequent combat modifiers remain handled by the engine.
+
+Each caster uses their own ML. The calibration targets RP around half the mage
+damage and EK around 30% below RP, rather than exactly those percentages for
+arbitrary character skills. With the agreed example MLs at levels 50 through 400,
+RP ranges from 43.4% to 61.1% of mage damage, and EK from 34.1% to 25.9% below RP.
+All three retain their original element, area, requirements and modern formula.
+This is a custom balance choice, not a claim of historical 7.4 availability.
+
+Validation: `tests/lua/traditional_area_runes_test.lua` executes the three real
+callbacks and shared library, checking class factors, own level/ML scaling,
+mode cycles and restoration of the original modern formulas. The C++ policy
+test checks availability of both newly allowed runes. In-game testing remains
+necessary for final damage after target resistance and other combat modifiers.
+
+Local validation completed: LuaJIT area rune, UH and client actionbar tests passed;
+standalone MSVC policy assertions and the `windows-release` build passed.
+The executable was installed at `custom/canary/canary.exe` after a verified backup
+and graceful shutdown/save. Restart from `custom/canary` confirmed server online
+with `modernCombatSystem = false` and no Lua loading errors. Full GTest and
+in-game damage/element/cooldown verification were not performed.
 
 ### Movimento com paralyze
 

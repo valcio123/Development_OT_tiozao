@@ -46,7 +46,7 @@ constexpr bool isSpellAvailable(bool modern, std::string_view name) {
 		"poison field rune", "poison bomb rune", "poison wall rune", "fire field rune", "fire bomb rune", "fire wall rune",
 		"energy field rune", "energybomb rune", "energy bomb rune", "energy wall rune", "soulfire rune",
 		"animate dead rune", "convince creature rune", "chameleon rune", "destroy field rune", "desintegrate rune", "disintegrate rune",
-		"magic wall rune", "paralyze rune",
+		"magic wall rune", "paralyze rune", "thunderstorm rune", "avalanche rune",
 	};
 	for (auto candidate : allowed) {
 		if (sameSpellName(name, candidate)) {
