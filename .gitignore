@@ -28,3 +28,7 @@ configure_log.txt
 # Backups locais de executaveis e simbolos com sufixo _old.
 /custom/canary/*.exe_old*
 /custom/canary/*.pdb_old*
+
+# Artefatos locais de execucao e backup - NAO versionar.
+/site/storage/
+/backups/
