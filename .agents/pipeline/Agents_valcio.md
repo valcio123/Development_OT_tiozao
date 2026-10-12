@@ -67,3 +67,10 @@ The global Git, commit, PR, C++ header, exception, and documentation policies ap
 - This authorization does not request merges, releases, force pushes or deployment. Report the commit and push result, including any blocker.
 - User preference: use a specific commit title describing the actual change, and update the Pull Request title/body for the reviewer with final scope, validation and remaining limitations before publishing.
 - Current publication path: push Development to fork/Development (valcio123/otzaodotio); PR #1 targets leoalvesjf/otzaodotio:main. No merge is authorized.
+
+## Authorized local runtime updates
+
+- User preference recorded on 2026-10-12: after a validated Canary executable change, automatically install the new executable into `custom/canary/canary.exe`, preserving and verifying the previous bytes in a backup. Do not leave the executable only in the build directory for the user to copy manually.
+- If the local test server is running, this preference authorizes a controlled shutdown/save and restart for that update. Never use a forced process kill as a substitute for graceful shutdown. If graceful shutdown cannot be performed through an available interface, prepare the executable and report that specific blocker.
+- Start the updated server with `custom/canary` as its working directory so config.lua, data and runtime files resolve correctly. Use hidden windows for background launches; verify startup and report failures.
+- For client Lua changes, update the active local client files and reload/restart the client when supported, preserving its configuration. Commit/push source changes and maintain the PR description; keep binaries, backups and private runtime configuration outside Git.

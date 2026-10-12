@@ -24,3 +24,7 @@ configure_log.txt
 # Copias acidentais de metadados e gravacoes locais.
 /custom/canary/data/scripts/talkactions/player/.github/
 /custom/otclient/records/*.cam
+
+# Backups locais de executaveis e simbolos com sufixo _old.
+/custom/canary/*.exe_old*
+/custom/canary/*.pdb_old*
