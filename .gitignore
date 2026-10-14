@@ -1,34 +1,57 @@
-# Clones upstream locais (pesados) - NAO versionar.
-# Somente as customizacoes em custom/ sao rastreadas neste repo.
-/canary/
-/otclient/
+# Projeto ativo: fontes em canary/ e otclient/ sao versionadas.
 
 # Logs e arquivos temporarios de build
 *.log
 configure_log.txt
 
 # Segredos e dados internos - NUNCA versionar (ficam so locais)
-/custom/canary/config.lua
-/custom/canary/create_tiozao_account.sql
-/custom/canary/.agents/
+/canary/config.lua
+/canary/create_tiozao_account.sql
+/canary/.agents/
 
 # Snapshot local completo do Canary: backups e material privado ficam locais.
 *.old
 *.old.*
-/custom/canary/config.lua_old*
-/custom/canary/key.pem
-/custom/canary/cache/
-/custom/canary/data/scripts/talkactions/player/.tools/
-/custom/canary/data/scripts/talkactions/player/.vs/
+/canary/config.lua_old*
+/canary/key.pem
+/canary/cache/
+/canary/data/scripts/talkactions/player/.tools/
+/canary/data/scripts/talkactions/player/.vs/
 
 # Copias acidentais de metadados e gravacoes locais.
-/custom/canary/data/scripts/talkactions/player/.github/
-/custom/otclient/records/*.cam
+/canary/data/scripts/talkactions/player/.github/
+/otclient/records/*.cam
 
 # Backups locais de executaveis e simbolos com sufixo _old.
-/custom/canary/*.exe_old*
-/custom/canary/*.pdb_old*
+/canary/*.exe_old*
+/canary/*.pdb_old*
 
 # Artefatos locais de execucao e backup - NAO versionar.
 /site/storage/
 /backups/
+
+# Agents instructions and project memory are local-only.
+/.agents/
+/**/AGENTS.md
+/**/Agents_*.md
+/**/OT_Tiozao_CONTINUIDADE.md
+
+# Ferramentas, configuracoes pessoais e dados de execucao locais.
+.tools/
+.agents/
+/.codex/
+/.aws/
+.env
+.env.*
+!.env.example
+!.env.*.example
+/canary/database_backup/
+/otclient/config.ini
+/otclient/cache/
+*.exe_old*
+*.pdb_old*
+
+# Templates publicos e backups antigos.
+!.env.dist
+*_old
+*_old.*
