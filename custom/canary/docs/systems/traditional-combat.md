@@ -1,5 +1,93 @@
 # Modo de combate tradicional
 
+## Visual e elemento das ultimates tradicionais
+
+No modo tradicional, Mas Vis usa `CONST_ME_EXPLOSIONAREA` (5) e Mas Tera usa
+`CONST_ME_POISONAREA` (21). Ambas causam dano fisico, conforme pedido do usuario.
+As formulas, area, custo de 1200 mana e cooldown tradicional permanecem vigentes.
+Mas Tera usa a animacao de veneno com dano fisico imediato; nao aplica poison.
+No modo moderno, Mas Vis conserva energia/Big Clouds e Mas Tera terra/Small Plants.
+Os efeitos existentes no cliente 15.25 ainda dependem de validacao visual em jogo.
+
+## Calibracao recente do Exori com mana potion (2026-10-13)
+
+Esta decisao substitui as calibracoes anteriores de Exori em 60% do Mas Vis.
+O custo permanece `max(225, ceil(2.8 * level))`. Para os perfis de referencia,
+o dano medio por Exori e calibrado para que o DPS sustentavel seja 90% do DPS
+do Mas Tera (ED), exceto no ponto especifico definido pelo usuario: level 300,
+skill 100, DPS 144. Considerando mana potion comum ID 268 com recuperacao media
+100 por segundo e regeneracao natural: +1/s para ED e +2/6 por segundo para EK.
+Mas Tera custa 1200 mana. Assim, `ED DPS = ED dano medio * 101 / 1200`, e
+`Exori dano medio alvo = 0.90 * ED DPS * custo Exori / (100 + 2/6)`.
+Os fatores de dano sao ancorados nos perfis abaixo e interpolados por level;
+skill, ataque da arma e ML do proprio knight seguem contribuindo na formula.
+Esse alvo conserva o custo progressivo que limita o EK e corrige o DPS que
+caia nos levels maiores. Dano e DPS seguem por alvo; Exori atinge uma area.
+
+| Level | Skill/ML EK | Custo mana | Exori min/medio/max | DPS EK alvo | DPS ED referencia |
+|---:|---:|---:|---:|---:|---:|
+| 50 | 90/4 | 225 | 62/79/96 | 35.20 | 39.11 |
+| 80 | 100/5 | 225 | 84/109/134 | 48.68 | 54.09 |
+| 100 | 110/6 | 280 | 127/165/204 | 59.17 | 65.74 |
+| 200 | 120/8 | 560 | 406/535/664 | 95.87 | 106.52 |
+| 300 | 100/9 | 840 | 911/1206/1500 | 144.00 | 144.80 |
+| 400 | 140/10 | 1120 | 1388/1839/2291 | 164.78 | 183.08 |
+
+## MS/EK damage calibration (2026-10-13, supersedes prior Exori damage examples)
+
+Traditional Mas Vis (Rage of the Skies) is explicitly allowed and uses
+F = 2*level + 3*ML; min = 2.26*F, max = 3.39*F, mean = 2.825*F.
+This is 1.13 times Nostalrius Ultimate Explosion's damage formula. Current
+Canary energy type, area, level 55 and mana 600 are preserved. Traditional
+attack exhaustion remains 2 seconds; modern retains its original damage.
+
+Traditional Exori multiplies the existing min/max by a level calibration
+factor. Reference profiles (level/mage ML/knight skill/knight ML), at weapon
+attack 50: 50/45/90/4, 80/55/100/5, 100/65/110/6, 200/80/120/8,
+300/90/130/9, 400/100/140/10. Each anchor factor is 0.60 * Mas Vis mean /
+previous Exori reference mean. Factors interpolate linearly between anchors;
+outside levels 50--400 the nearest endpoint factor is kept. The 60% target
+is exact at these reference anchors, approximate between them, and is not a
+universal ratio across arbitrary skills, ML, gear or targets. Skill, equipped
+weapon attack and the knight's own ML still affect actual Exori damage.
+Highest effective melee skill and the 13.08% bonus from skill 100 to 120 remain.
+Exori mana remains max(225, ceil(2.8*level)); modern damage is unchanged.
+At level 300/skill 130/ML 9/attack 50, Exori mean is 1474.65 and MS at
+level 300/ML 90 has mean 2457.75. DPS at an observed 8-second Exori interval
+is 184.33 per target; this interval is an observation, not the spell cooldown.
+
+The earlier audit entry excluding Rage of the Skies as a substitute is
+superseded by this explicit approval. ED 70% remains a balance target;
+ED spells and RP/rune formulas are not changed in this MS/EK update.
+
+
+## Exori and Stone Shower calibration (2026-10-13)
+
+Traditional Berserk uses the highest effective sword/axe/club skill. Skill
+bonus = 0.30 * (min(skill, 90) - 10) and bonus = skill bonus + 0.10 * equipped
+weapon attack + 0.10 * ML. Above skill 90, apply skill multiplier =
+1 + 0.007 * (skill - 90). Raw damage minimum = (3.12 * level + bonus) * 1.30
+* skill multiplier; maximum = (5.20 * level + bonus) * 1.30 * skill multiplier.
+At fixed level/ML/weapon, skill 100 to 120 raises damage by 13.08%. The final
+1.30 multiplier addresses low sustained Exori DPS while preserving linear
+level scaling.
+Mana cost = max(225, ceil(2.8 * level)), checked and charged centrally by getManaCost;
+modern Berserk retains its original formula and 115 mana definition.
+Traditional mode removes the explicit level requirement through getLevel;
+the equipped weapon requirement remains. The 225 mana floor matches the
+project's Knight Sample at level 35 (90 mana at level 8, +5 per level).
+The floor applies through level 80; level 81 costs 227 mana. Characters with
+extra mana can qualify earlier; eligibility is determined by available mana.
+At level 100, skill 90, attack 50 and ML 6, raw damage is 444.08--714.48
+and mana cost is 280.
+
+Stone Shower is available in traditional mode and uses the shared area-rune
+formula and vocation factors. Its earth element, area and requirements remain.
+Modern mode restores its original damage. Shared attack exhaustion remains 2s.
+Lua tests cover both modes, highest skill, skill cap, weapon/ML/level scaling,
+and all four area runes. Final damage and mana/cooldown displays require an
+in-game test before commit/push.
+
 ## Configuração
 
 `modernCombatSystem = true` mantém as regras existentes. `false` aplica as
@@ -191,3 +279,6 @@ do paralyze nos cinco pontos de entrada/execução do uso de itens. O personagem
 continua lento, e alcance, alvo, paredes, custos e cooldown de combate permanecem
 validados. A exaustão de itens/poções e o comportamento do modo moderno são preservados.
 O teste de política cobre a separação para runas e a preservação dos demais itens.
+# Traditional ultimate spells: mana and ED damage
+
+Rage of the Skies and Wrath of Nature cost a fixed 1200 mana in traditional mode, without Wheel mana discounts. Wrath of Nature is available through the central spell policy. For equal level and magic level its damage limits are 70% of Rage of the Skies: minimum `1.582 * (2L + 3ML)`, maximum `2.373 * (2L + 3ML)`. This applies to Mas Tera only; other ED spells have not been rebalanced. Modern damage, availability and registered mana costs (600/700) are preserved.

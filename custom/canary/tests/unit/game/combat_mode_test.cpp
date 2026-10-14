@@ -71,6 +71,9 @@ MODE_TEST(AvailabilityHasNoSubstringOrCaseEscape) {
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, "Restoration"));
 	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Avalanche Rune"));
 	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Thunderstorm Rune"));
+	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Stone Shower Rune"));
+	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Rage of the Skies"));
+	MODE_EXPECT(CombatMode::isSpellAvailable(false, "Wrath of Nature"));
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, "Swift Jab"));
 	MODE_EXPECT(!CombatMode::isSpellAvailable(false, ""));
 	MODE_EXPECT(CombatMode::traditionalCooldownMs == 2000);

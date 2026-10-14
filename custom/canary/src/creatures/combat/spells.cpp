@@ -549,7 +549,7 @@ bool Spell::playerSpellCheck(const std::shared_ptr<Player> &player) const {
 		return false;
 	}
 
-	if (player->getLevel() < level) {
+	if (player->getLevel() < getLevel()) {
 		player->sendCancelMessage(RETURNVALUE_NOTENOUGHLEVEL);
 		g_game().addMagicEffect(player->getPosition(), CONST_ME_POFF);
 		return false;
@@ -972,6 +972,13 @@ bool Spell::isLearnable() const {
 }
 
 uint32_t Spell::getManaCost(const std::shared_ptr<Player> &player) const {
+	if (!g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) && (CombatMode::sameSpellName(name, "rage of the skies") || CombatMode::sameSpellName(name, "wrath of nature"))) {
+		return 1200;
+	}
+	if (!g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) && CombatMode::sameSpellName(name, "berserk")) {
+		// Traditional Exori costs at least 225 mana, then 2.8 per level rounded up.
+		return static_cast<uint32_t>(std::max<uint64_t>(225, std::min<uint64_t>((static_cast<uint64_t>(player->getLevel()) * 14 + 4) / 5, UINT32_MAX)));
+	}
 	WheelSpellGrade_t spellGrade = player->wheel().getSpellUpgrade(getName());
 	uint32_t manaRedution = 0;
 	if (getWheelOfDestinyUpgraded() && static_cast<uint8_t>(spellGrade) > 0) {
@@ -1007,6 +1014,9 @@ void Spell::setSoulCost(uint32_t s) {
 }
 
 uint32_t Spell::getLevel() const {
+	if (!g_configManager().getBoolean(MODERN_COMBAT_SYSTEM) && CombatMode::sameSpellName(name, "berserk")) {
+		return 0;
+	}
 	return level;
 }
 

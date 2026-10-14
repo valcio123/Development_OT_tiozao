@@ -1,9 +1,16 @@
 local combat = Combat()
-combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_ENERGYDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_BIGCLOUDS)
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
+combat:setParameter(COMBAT_PARAM_TYPE, traditional and COMBAT_PHYSICALDAMAGE or COMBAT_ENERGYDAMAGE)
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and CONST_ME_EXPLOSIONAREA or CONST_ME_BIGCLOUDS)
 combat:setArea(createCombatArea(AREA_CIRCLE6X6))
 
 function onGetFormulaValues(player, level, maglevel)
+	if not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM) then
+		-- Nostalrius Ultimate Explosion damage, with the approved 1.13 factor.
+		local base = 2 * level + 3 * maglevel
+		return -2.26 * base, -3.39 * base
+	end
+
 	local min = (level / 5) + (maglevel * 7)
 	local max = (level / 5) + (maglevel * 14)
 	return -min, -max

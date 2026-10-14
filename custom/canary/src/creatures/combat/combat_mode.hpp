@@ -43,7 +43,7 @@ constexpr bool isSpellAvailable(bool modern, std::string_view name) {
 		"light healing", "intense healing", "ultimate healing", "heal friend", "mass healing", "cure poison",
 		"light", "great light", "ultimate light", "magic rope", "levitate", "find person", "food",
 		"magic shield", "haste", "strong haste", "invisibility", "cancel invisibility", "creature illusion", "summon creature",
-		"berserk", "challenge", "fire wave", "energy wave", "energy beam", "great energy beam", "flame strike", "energy strike",
+		"berserk", "challenge", "fire wave", "energy wave", "energy beam", "great energy beam", "flame strike", "energy strike", "rage of the skies", "wrath of nature",
 		"conjure arrow", "conjure poisoned arrow", "conjure explosive arrow", "conjure bolt", "conjure power bolt", "enchant staff",
 		"house guest list", "house subowner list", "house door list", "house kick",
 		"antidote rune", "cure poison rune", "intense healing rune", "ultimate healing rune",
@@ -51,7 +51,7 @@ constexpr bool isSpellAvailable(bool modern, std::string_view name) {
 		"poison field rune", "poison bomb rune", "poison wall rune", "fire field rune", "fire bomb rune", "fire wall rune",
 		"energy field rune", "energybomb rune", "energy bomb rune", "energy wall rune", "soulfire rune",
 		"animate dead rune", "convince creature rune", "chameleon rune", "destroy field rune", "desintegrate rune", "disintegrate rune",
-		"magic wall rune", "paralyze rune", "thunderstorm rune", "avalanche rune",
+		"magic wall rune", "paralyze rune", "thunderstorm rune", "avalanche rune", "stone shower rune",
 	};
 	for (auto candidate : allowed) {
 		if (sameSpellName(name, candidate)) {

@@ -16,7 +16,7 @@ local function check(callback, id, level, ml, expectedMin, expectedMax)
 	assert(math.abs(max + expectedMax) < 0.000001, "maximum mismatch")
 end
 
-for _, name in ipairs({ "great_fireball", "avalanche", "thunderstorm" }) do
+for _, name in ipairs({ "great_fireball", "avalanche", "thunderstorm", "stone_shower" }) do
 	dofile("data/scripts/runes/" .. name .. ".lua")
 	local callback = onGetFormulaValues
 	modern = false
@@ -33,7 +33,7 @@ for _, name in ipairs({ "great_fireball", "avalanche", "thunderstorm" }) do
 	check(callback, 3, 201, 24, 124.425, 231.075)
 	check(callback, 3, 200, 25, 124.6875, 231.5625)
 	modern = true
-	if name == "thunderstorm" then
+	if name == "thunderstorm" or name == "stone_shower" then
 		check(callback, 3, 100, 18, 44, 82.8)
 	else
 		check(callback, 3, 100, 18, 48.6, 87.4)
@@ -41,4 +41,4 @@ for _, name in ipairs({ "great_fireball", "avalanche", "thunderstorm" }) do
 	modern = false
 	check(callback, 4, 200, 8, 89.04, 165.36)
 end
-print("Area rune tests passed: all three callbacks, class factors, level/ML scaling and modern restoration")
+print("Area rune tests passed: all four callbacks, class factors, level/ML scaling and modern restoration")

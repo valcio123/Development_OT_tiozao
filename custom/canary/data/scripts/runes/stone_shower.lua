@@ -5,6 +5,9 @@ combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_EARTH)
 combat:setArea(createCombatArea(AREA_CIRCLE3X3))
 
 function onGetFormulaValues(player, level, magicLevel)
+	if not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM) then
+		return getTraditionalAreaRuneDamage(player, level, magicLevel)
+	end
 	local min = (level / 5) + (magicLevel * 1) + 6
 	local max = (level / 5) + (magicLevel * 2.6) + 16
 	return -min, -max

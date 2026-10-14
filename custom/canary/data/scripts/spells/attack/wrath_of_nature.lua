@@ -1,9 +1,16 @@
 local combat = Combat()
-combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_EARTHDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_SMALLPLANTS)
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
+combat:setParameter(COMBAT_PARAM_TYPE, traditional and COMBAT_PHYSICALDAMAGE or COMBAT_EARTHDAMAGE)
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and CONST_ME_POISONAREA or CONST_ME_SMALLPLANTS)
 combat:setArea(createCombatArea(AREA_CIRCLE6X6))
 
 function onGetFormulaValues(player, level, maglevel)
+	if not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM) then
+		local base = 2 * level + 3 * maglevel
+		local druidDamageFactor = 0.70
+		return -2.26 * base * druidDamageFactor, -3.39 * base * druidDamageFactor
+	end
+
 	local min = (level / 5) + (maglevel * 5)
 	local max = (level / 5) + (maglevel * 10)
 	return -min, -max
