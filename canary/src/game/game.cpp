@@ -8379,6 +8379,7 @@ bool Game::combatChangeHealth(const std::shared_ptr<Creature> &attacker, const s
 		auto realHealthChange = target->getHealth();
 		target->gainHealth(attacker, damage.primary.value);
 		realHealthChange = target->getHealth() - realHealthChange;
+		combatTelemetry_.impact("heal", attacker, target, damage, realHealthChange, 0);
 
 		if (realHealthChange > 0 && !target->isInGhostMode()) {
 			if (targetPlayer) {
@@ -8618,7 +8619,9 @@ bool Game::combatChangeHealth(const std::shared_ptr<Creature> &attacker, const s
 					}
 				}
 
+				const auto telemetryManaBefore = target->getMana();
 				target->drainMana(attacker, manaDamage);
+				combatTelemetry_.impact("mana_shield", attacker, target, damage, 0, target->getMana() - telemetryManaBefore);
 
 				if (target->getMana() == 0 && manaShield > 0) {
 					target->removeCondition(CONDITION_MANASHIELD);
@@ -8733,7 +8736,9 @@ bool Game::combatChangeHealth(const std::shared_ptr<Creature> &attacker, const s
 			damage.secondary.value = std::min<int32_t>(damage.secondary.value, targetHealth - damage.primary.value);
 		}
 
+		const auto telemetryHealthBefore = target->getHealth();
 		target->drainHealth(attacker, realDamage);
+		combatTelemetry_.impact("damage", attacker, target, damage, target->getHealth() - telemetryHealthBefore, 0);
 		if (realDamage > 0 && targetMonster) {
 			if (targetMonster->israndomStepping()) {
 				targetMonster->setIgnoreFieldDamage(true);
@@ -9112,6 +9117,7 @@ bool Game::combatChangeMana(const std::shared_ptr<Creature> &attacker, const std
 		auto realManaChange = target->getMana();
 		target->changeMana(manaChange);
 		realManaChange = target->getMana() - realManaChange;
+		combatTelemetry_.impact("mana_restore", attacker, target, damage, 0, realManaChange);
 
 		if (realManaChange > 0 && !target->isInGhostMode()) {
 			std::string damageString = fmt::format("{} mana", realManaChange);
@@ -9224,7 +9230,9 @@ bool Game::combatChangeMana(const std::shared_ptr<Creature> &attacker, const std
 			}
 		}
 
+		const auto telemetryManaBefore = target->getMana();
 		target->drainMana(attacker, manaLoss);
+		combatTelemetry_.impact("mana_drain", attacker, target, damage, 0, target->getMana() - telemetryManaBefore);
 
 		std::stringstream ss;
 
@@ -9512,6 +9520,7 @@ void Game::shutdown() {
 
 	g_luaEnvironment().collectGarbage();
 
+	combatTelemetry_.flush();
 	g_logger().info("Done!");
 }
 

@@ -55,3 +55,10 @@ configure_log.txt
 !.env.dist
 *_old
 *_old.*
+
+# Development combat captures and CSV reports remain local.
+/canary/logs/combat-telemetry/
+
+# Python bytecode caches are generated locally.
+__pycache__/
+*.py[cod]

@@ -780,14 +780,13 @@ function Cyclopedia.loadCharacterGeneralStats(data, skills)
     Cyclopedia.setCharacterSkillPercent("level", data.levelPercent, text)
     Cyclopedia.setCharacterSkillValue("experience", comma_value(player:getExperience()))
 
-    local expGainRate = data.baseExpGain + data.XpBoostPercent
+    local staminaMultiplier = data.staminaExpBonus or 100
+    local lowLevelBonus = data.lowLevelExpBonus or 0
+    local expGainRate = (data.baseExpGain + data.XpBoostPercent + lowLevelBonus) * staminaMultiplier / 100
     local hasStoreExpBonus = data.XpBoostPercent > 0
-    local hasStaminaBonus = data.staminaMinutes / 60 >= 3
-
-    expGainRate = hasStaminaBonus and expGainRate * 1.5 or expGainRate
-
-    local staminaBonusTime = string.format("%02d:%02d", math.floor(math.min(data.staminaMinutes, 180) / 60),
-        math.min(data.staminaMinutes, 180) % 60)
+    local hasStaminaBonus = staminaMultiplier > 100
+    local bonusMinutes = math.max(0, data.staminaMinutes - 2340)
+    local staminaBonusTime = string.format("%02d:%02d", math.floor(bonusMinutes / 60), bonusMinutes % 60)
     local storeExpBonusTime = format(data.XpBoostBonusRemainingTime)
     local expGainRateTooltip = string.format(
         "Your current XP gain rate amounts to %d%%.\nYour XP gain rate is calculated as follows:\n- Base XP gain rate: %d%%",
@@ -799,6 +798,10 @@ function Cyclopedia.loadCharacterGeneralStats(data, skills)
     expGainRateTooltip = hasStaminaBonus and expGainRateTooltip ..
                              string.format("\n- Stamina bonus: x1.5 (%s h remaining).", staminaBonusTime) or
                              expGainRateTooltip
+    if lowLevelBonus > 0 then
+        expGainRateTooltip = expGainRateTooltip .. string.format("\n- Low Level Bonus: %d%%", lowLevelBonus)
+    end
+    expGainRateTooltip = expGainRateTooltip .. string.format("\n- Stamina multiplier: %d%%", staminaMultiplier)
 
     UI.CharacterStats.expGainRate:setTooltip(expGainRateTooltip)
     -- UI.CharacterStats.expGainRate:setTooltipAlign(AlignTopLeft)
@@ -831,12 +834,15 @@ function Cyclopedia.loadCharacterGeneralStats(data, skills)
 
     Cyclopedia.setCharacterSkillValue("stamina", staminaHours .. ":" .. staminaMinutes)
 
-    if data.staminaMinutes > 2400 and g_game.getClientVersion() >= 1038 and player:isPremium() then
+    if not (player:getLevel() < 8 or player:getVocation() == 0) then
+        local text = "Stamina XP multiplier: 100%. Bonuses and penalties apply only below level 8 or without a vocation."
+        Cyclopedia.setCharacterSkillPercent("stamina", staminaPercent, text, "#C0C0C0")
+    elseif data.staminaMinutes > 2340 and g_game.getClientVersion() >= 1038 and player:isPremium() then
         local text = tr("You have %s hours and %s minutes left", staminaHours, staminaMinutes) .. "\n" ..
                          tr("Now you will gain 50%% more experience")
 
         Cyclopedia.setCharacterSkillPercent("stamina", staminaPercent, text, "green")
-    elseif data.staminaMinutes > 2400 and g_game.getClientVersion() >= 1038 and not player:isPremium() then
+    elseif data.staminaMinutes > 2340 and g_game.getClientVersion() >= 1038 and not player:isPremium() then
         local text = tr("You have %s hours and %s minutes left", staminaHours, staminaMinutes) .. "\n" ..
                          tr(
                 "You will not gain 50%% more experience because you aren't premium player, now you receive only 1x experience points")

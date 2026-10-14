@@ -18,6 +18,7 @@
 #include "map/map.hpp"
 #include "modal_window/modal_window.hpp"
 #include "movement/position.hpp"
+#include "creatures/combat/combat_telemetry.hpp"
 
 // Forward declaration for protobuf class
 namespace Canary {
@@ -96,6 +97,7 @@ class Game {
 public:
 	Game();
 	~Game();
+	CombatTelemetry &combatTelemetry() { return combatTelemetry_; }
 
 	// Singleton - ensures we don't accidentally copy it.
 	Game(const Game &) = delete;
@@ -772,6 +774,7 @@ public:
 	std::shared_ptr<Container> findManagedContainer(const std::shared_ptr<Player> &player, bool &fallbackConsumed, ObjectCategory_t category, bool isLootContainer);
 
 private:
+	CombatTelemetry combatTelemetry_;
 	std::map<uint16_t, Achievement> m_achievements;
 	std::map<std::string, uint16_t> m_achievementsNameToId;
 

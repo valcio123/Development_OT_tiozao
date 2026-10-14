@@ -10,6 +10,9 @@ function MonsterType:generateLootRoll(config, resultTable, player)
 	local uniqueItems = {}
 
 	local factor = config.factor or 1.0
+	if CreatureRebalance.enabled and not CreatureRebalance.isExcluded(self:name()) then
+		factor = factor * CreatureRebalance.lootMultiplier
+	end
 	if self:isRewardBoss() then
 		factor = factor * SCHEDULE_BOSS_LOOT_RATE / 100
 	end

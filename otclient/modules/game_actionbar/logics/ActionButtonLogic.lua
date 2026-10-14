@@ -217,7 +217,11 @@ local function setupHotkeyButton(button)
     local actionKey = "TriggerActionButton_" .. button:getId()
     local keySequence = hotkeyCache[actionKey]
     
-    if keySequence then
+    if button.cache.hotkey then unbindHotkey(button.cache.hotkey) end
+    button.cache.hotkey = nil
+    local legacyUsed = keySequence and modules.game_hotkeys and modules.game_hotkeys.isHotkeyUsedByManager and
+        modules.game_hotkeys.isHotkeyUsedByManager(keySequence)
+    if keySequence and keySequence ~= "" and not legacyUsed then
         button.cache.hotkey = keySequence
         unbindHotkey(keySequence)
         bindHotkey(button, keySequence)

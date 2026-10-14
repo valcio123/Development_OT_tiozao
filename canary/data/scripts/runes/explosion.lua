@@ -1,11 +1,17 @@
 local combat = Combat()
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_EXPLOSIONAREA)
-combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_EXPLOSION)
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and 353 or CONST_ME_EXPLOSIONAREA)
+combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, traditional and 70 or CONST_ANI_EXPLOSION)
 combat:setParameter(COMBAT_PARAM_BLOCKARMOR, 1)
 combat:setArea(createCombatArea(AREA_CIRCLE1X1))
 
 function onGetFormulaValues(player, level, maglevel)
+	if traditional then
+		-- Nostalrius Explosion: same scaling for all vocations.
+		local base = 2 * level + 3 * maglevel
+		return -0.20 * base, -base
+	end
 	local min = 0
 	local max = (level / 5) + (maglevel * 4.8)
 	return -min, -max

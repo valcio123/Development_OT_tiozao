@@ -2206,7 +2206,7 @@ int PlayerFunctions::luaPlayerCanReceiveLoot(lua_State* L) {
 		return 1;
 	}
 
-	lua_pushboolean(L, player->getStaminaMinutes() > 840);
+	lua_pushboolean(L, !player->hasRookieExperienceBonuses() || player->getStaminaMinutes() > 840);
 	return 1;
 }
 

@@ -2,7 +2,12 @@ local spell = Spell("instant")
 
 function spell.onCastSpell(player, variant)
 	local position = player:getPosition()
-	local monsterName = variant:getString()
+	local monsterName = variant:getString():match("^%s*(.-)%s*$")
+	if monsterName == "" then
+		player:sendCancelMessage('Use utevo res "Monster Name" (for example, utevo res "Monk").')
+		position:sendMagicEffect(CONST_ME_POFF)
+		return false
+	end
 	local monsterType = MonsterType(monsterName)
 
 	if not monsterType then
@@ -53,6 +58,8 @@ spell:words("utevo res")
 spell:castSound(SOUND_EFFECT_TYPE_SPELL_SUMMON_CREATURE)
 spell:level(25)
 spell:hasParams(true)
+-- Summoning is support, not an offensive spell; retain the modern definition.
+spell:isAggressive(configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM))
 spell:cooldown(2 * 1000)
 spell:groupCooldown(2 * 1000)
 

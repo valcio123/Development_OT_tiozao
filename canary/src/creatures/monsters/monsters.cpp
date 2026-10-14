@@ -334,6 +334,9 @@ float MonsterType::getHealthMultiplier() const {
 }
 
 float MonsterType::getAttackMultiplier() const {
+	if (info.rebalanceAttackMultiplier >= 0.0F) {
+		return info.rebalanceAttackMultiplier;
+	}
 	return isBoss() ? g_configManager().getFloat(RATE_BOSS_ATTACK) : g_configManager().getFloat(RATE_MONSTER_ATTACK);
 }
 

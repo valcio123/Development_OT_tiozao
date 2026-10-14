@@ -567,7 +567,8 @@ sortLootByChance = false
 -- Rates
 -- NOTE: rateExp, rateSkill and rateMagic is used when 'rateUseStages = false' - or a fallback only
 -- To configure rates see file data/stages.lua
--- lowLevelBonusExp works up to level 50
+-- lowLevelBonusExp applies only below level 8 OR with vocation 0 (Rookgaard).
+-- After level 8 with a vocation, stamina XP is always 100%, without exhaustion penalties.
 rateUseStages = false
 lowLevelBonusExp = 50
 rateExp = 1
@@ -605,6 +606,23 @@ rateNpcHealth = 1.0
 rateBossHealth = 1.0
 rateBossAttack = 1.0
 rateBossDefense = 1.0
+
+-- OT_Tiozao creature/economy rebalance (startup-only; restart after changes).
+-- Independent of modernCombatSystem. false restores original rates/catalogs.
+-- Rookgaard species are excluded worldwide from damage/HP/invisibility/loot.
+-- List: data/libs/functions/rebalance_rookgaard_creatures.lua
+rebalanceSystemEnabled = true
+rebalanceCreatureDamageMultiplier = 1.30 -- except worldwide Rookgaard species; healing unchanged
+rebalanceModernCreatureHealthMultiplier = 1.20 -- only creatures introduced after 7.6
+rebalanceModernCreaturesSeeInvisible = true -- only post-7.6 creatures
+rebalanceLootMultiplier = 0.80 -- except Rookgaard species; includes bonus and boss rewards
+rebalanceManaPotionPrice = 100 -- ordinary mana potion (268), every registered NPC
+-- Keep rateLoot at its base integer value; the fractional factor is applied in Lua.
+-- Keep base attack rates above unchanged: apply the extra multiplier once here.
+if rebalanceSystemEnabled then
+    rateMonsterAttack = rateMonsterAttack * rebalanceCreatureDamageMultiplier
+    rateBossAttack = rateBossAttack * rebalanceCreatureDamageMultiplier
+end
 
 bossDefaultTimeToFightAgain = 20 * 60 * 60 -- 20 hours
 bossDefaultTimeToDefeat = 20 * 60 -- 20 minutes
@@ -689,3 +707,7 @@ OTCRFeatures = {
     disableFeature = {
     }
 }
+
+-- Development combat telemetry (startup-only). Empty filter records all players.
+combatTelemetryEnabled = false
+combatTelemetryPlayers = "" -- comma-separated exact character names

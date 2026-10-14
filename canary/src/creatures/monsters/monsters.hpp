@@ -103,6 +103,7 @@ class MonsterType {
 		std::string bosstiaryClass;
 
 		float mitigation = 0;
+		float rebalanceAttackMultiplier = -1.0F; // -1 uses the global attack rate
 
 		uint32_t soundChance = 0;
 		uint32_t soundSpeedTicks = 0;

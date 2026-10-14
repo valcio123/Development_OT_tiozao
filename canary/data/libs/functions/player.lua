@@ -346,7 +346,14 @@ function Player.getFinalBaseRateExperience(self)
 	return baseRate
 end
 
+function Player.hasRookieExperienceBonuses(self)
+	return self:getLevel() < 8 or self:getVocation():getId() == 0
+end
+
 function Player.getFinalBonusStamina(self)
+	if not self:hasRookieExperienceBonuses() then
+		return 1
+	end
 	local staminaBonus = 1
 	if configManager.getBoolean(configKeys.STAMINA_SYSTEM) then
 		local staminaMinutes = self:getStamina()
@@ -360,8 +367,7 @@ function Player.getFinalBonusStamina(self)
 end
 
 function Player.getFinalLowLevelBonus(self)
-	local level = self:getLevel()
-	if level > 0 and level <= 50 then
+	if self:hasRookieExperienceBonuses() then
 		self:setGrindingXpBoost(configManager.getNumber(configKeys.LOW_LEVEL_BONUS_EXP))
 	else
 		self:setGrindingXpBoost(0)

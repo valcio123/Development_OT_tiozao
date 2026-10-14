@@ -1,7 +1,7 @@
 local combat = Combat()
 local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
 combat:setParameter(COMBAT_PARAM_TYPE, traditional and COMBAT_PHYSICALDAMAGE or COMBAT_ENERGYDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, traditional and CONST_ME_EXPLOSIONAREA or CONST_ME_BIGCLOUDS)
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and 351 or CONST_ME_BIGCLOUDS)
 combat:setArea(createCombatArea(AREA_CIRCLE6X6))
 
 function onGetFormulaValues(player, level, maglevel)

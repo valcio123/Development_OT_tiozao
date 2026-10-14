@@ -159,7 +159,7 @@ registerNpcType.shop = function(npcType, mask)
 			local parent = Shop()
 			local itemName = shopItems.itemName or shopItems.itemname
 			local clientId = shopItems.clientId or shopItems.clientid
-			local buyPrice = shopItems.buy
+			local buyPrice = CreatureRebalance.buyPrice(clientId, itemName, shopItems.buy)
 			local sellPrice = shopItems.sell
 			local npcName = npcType:getName() -- Assuming `npcType` has a `getName` method to get the NPC's name
 
@@ -220,7 +220,7 @@ registerNpcType.shop = function(npcType, mask)
 						child:setCount(children.subType or children.subtype or children.count)
 					end
 					if children.buy then
-						child:setBuyPrice(children.buy)
+						child:setBuyPrice(CreatureRebalance.buyPrice(children.clientId or children.clientid, children.itemName or children.itemname, children.buy))
 					end
 					if children.sell then
 						child:setSellPrice(children.sell)

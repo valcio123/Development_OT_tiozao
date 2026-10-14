@@ -175,6 +175,38 @@ local function sanitizeHotkeyAssignments()
     end
 end
 
+local function ensureFunctionKeyDefaults(hotkeySets)
+    for _, profile in pairs(hotkeySets) do
+        profile.actionBarOptions = profile.actionBarOptions or {}
+        local mappings = profile.actionBarOptions.mappings or {}
+        profile.actionBarOptions.mappings = mappings
+        for _, mode in ipairs({'chatOn', 'chatOff'}) do
+            profile[mode] = profile[mode] or {}
+            local entries = profile[mode]
+            local actions, keys = {}, {}
+            for _, entry in pairs(entries) do
+                local action = entry.actionsetting and entry.actionsetting.action
+                if action then actions[action] = true end
+                if entry.keysequence and entry.keysequence ~= "" then keys[entry.keysequence:lower()] = true end
+                if entry.secondarySequence and entry.secondarySequence ~= "" then keys[entry.secondarySequence:lower()] = true end
+            end
+            for i = 1, 12 do
+                local action, key = 'TriggerActionButton_1.' .. i, 'F' .. i
+                local legacyUsed = modules.game_hotkeys and modules.game_hotkeys.isHotkeyUsedByManager and
+                    modules.game_hotkeys.isHotkeyUsedByManager(key)
+                if not actions[action] and not keys[key:lower()] and not legacyUsed then
+                    entries[#entries + 1] = {actionsetting = {action = action}, keysequence = key}
+                end
+                local mapped = false
+                for _, mapping in pairs(mappings) do
+                    if tonumber(mapping.actionBar) == 1 and tonumber(mapping.actionButton) == i then mapped = true; break end
+                end
+                if not mapped then mappings[#mappings + 1] = {actionBar = 1, actionButton = i} end
+            end
+        end
+    end
+end
+
 local function rebuildStateFromArray()
     local options = ensureState()
     options.actionBarMappingsIndex = nil
@@ -200,6 +232,7 @@ local function rebuildStateFromArray()
 
     options.hotkeySets = hotkeyOptions.hotkeySets or {}
     hotkeyOptions.hotkeySets = options.hotkeySets
+    ensureFunctionKeyDefaults(options.hotkeySets)
 
     if not options.profiles then
         options.profiles = {}
@@ -768,7 +801,7 @@ function ApiJson.removeMultiAction(barId, buttonId, slotIndex)
 end
 
 function ApiJson.removeHotkey(buttonId)
-    buttonId = tonumber(buttonId)
+    buttonId = buttonId and tostring(buttonId)
     if not buttonId then
         return
     end
@@ -782,7 +815,8 @@ function ApiJson.removeHotkey(buttonId)
     for index, data in ipairs(entries) do
         if data["actionsetting"] and data["actionsetting"]["action"] and data["actionsetting"]["action"] ==
             "TriggerActionButton_" .. buttonId then
-            table.remove(entries, index)
+            data.keysequence = ""
+            data.secondarySequence = ""
             break
         end
     end
@@ -809,7 +843,8 @@ function ApiJson.clearHotkey(hotkey)
                 data.secondarySequence = ""
             end
         elseif data.keysequence == hotkey then
-            table.remove(entries, index)
+            data.keysequence = ""
+            data.secondarySequence = ""
         end
     end
 end

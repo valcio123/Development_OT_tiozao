@@ -3223,11 +3223,11 @@ void Player::setVoucherXpBoost(uint16_t value) {
 }
 
 uint16_t Player::getGrindingXpBoost() const {
-	return grindingXpBoost;
+	return hasRookieExperienceBonuses() ? grindingXpBoost : 0;
 }
 
 uint16_t Player::getDisplayGrindingXpBoost() const {
-	return std::clamp<uint16_t>(grindingXpBoost * (baseXpGain / 100), 0, std::numeric_limits<uint16_t>::max());
+	return std::clamp<uint16_t>(getGrindingXpBoost() * (baseXpGain / 100), 0, std::numeric_limits<uint16_t>::max());
 }
 
 void Player::setGrindingXpBoost(uint16_t value) {
@@ -3252,7 +3252,7 @@ void Player::setXpBoostPercent(uint16_t percent) {
 }
 
 uint16_t Player::getStaminaXpBoost() const {
-	return staminaXpBoost;
+	return hasRookieExperienceBonuses() ? staminaXpBoost : 100;
 }
 
 void Player::setStaminaXpBoost(uint16_t value) {
@@ -4542,6 +4542,10 @@ void Player::removePlayer(bool displayEffect, bool forced /*= true*/) {
 
 uint64_t Player::getExpForLevel(const uint32_t level) {
 	return (((level - 6ULL) * level + 17ULL) * level - 12ULL) / 6ULL * 100ULL;
+}
+
+bool Player::hasRookieExperienceBonuses() const {
+	return getLevel() < 8 || getVocationId() == 0;
 }
 
 uint16_t Player::getStaminaMinutes() const {
@@ -6705,7 +6709,7 @@ bool Player::onKilledMonster(const std::shared_ptr<Monster> &monster) {
 }
 
 void Player::gainExperience(uint64_t gainExp, const std::shared_ptr<Creature> &target) {
-	if (hasFlag(PlayerFlags_t::NotGainExperience) || gainExp == 0 || staminaMinutes == 0) {
+	if (hasFlag(PlayerFlags_t::NotGainExperience) || gainExp == 0 || (hasRookieExperienceBonuses() && g_configManager().getBoolean(STAMINA_SYSTEM) && staminaMinutes == 0)) {
 		return;
 	}
 

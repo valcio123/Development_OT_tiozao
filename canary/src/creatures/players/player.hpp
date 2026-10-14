@@ -338,6 +338,8 @@ public:
 
 	static uint64_t getExpForLevel(const uint32_t level);
 
+	// XP stamina/low-level bonuses belong to rookies only.
+	bool hasRookieExperienceBonuses() const;
 	uint16_t getStaminaMinutes() const;
 
 	void sendItemsPrice() const;

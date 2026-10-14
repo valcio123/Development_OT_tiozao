@@ -1,7 +1,7 @@
 [
   {
     "type": "appearances",
-    "file": "appearances-20bdd73659a0671bab268120fb351d5e0ddf47c986040914722975f536a64735.dat"
+    "file": "appearances-74160e2d4becb85492e97a7b8e19f4ace0a8fb02fd42d64521eb407163891830.dat"
   },
   {
     "type": "staticdata",
@@ -39453,6 +39453,70 @@
     "spritetype": 0,
     "firstspriteid": 289912,
     "lastspriteid": 290055,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-a97cb0a4dc6e8be198532fcd2b96aa240bd145d5cdda7d8818eacd486cb694ea.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290056,
+    "lastspriteid": 290199,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-8ddfe332349779c24ea6162d187ed29d9fcf5bc589de92a9446ca5bf51f73a4f.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290200,
+    "lastspriteid": 290343,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-31b27946839b7d581cc49fc6f88cccd44df50e5b774cc4dc6968bb3b3efb5482.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290344,
+    "lastspriteid": 290487,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-8eb01d80d6b21d461494846115aeaa9aa401f5e2e5e22093978ebb54d8544bc9.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290488,
+    "lastspriteid": 290631,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-24e7c5ffecc64899edbcec74ebe06d8862d3868a94936cd36696c72eb9e05c56.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290632,
+    "lastspriteid": 290775,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-650ebbc34b3f310d83bdcb539b7c38aa3f5f1e74a1b35ba35cf80f4a55308728.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290776,
+    "lastspriteid": 290919,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-d49f08f6e95341b2bc1afe37214843949b44e67062f8b3ad8810bafeeae74c17.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 290920,
+    "lastspriteid": 291063,
+    "area": 0
+  },
+  {
+    "type": "sprite",
+    "file": "sprites-8d5e30fb7815aa3a547ddf57251ba11c87f8af8da35038a15b4e6bc48c5c6e0c.bmp.lzma",
+    "spritetype": 0,
+    "firstspriteid": 291064,
+    "lastspriteid": 291207,
     "area": 0
   }
 ]

@@ -1,9 +1,19 @@
 local combat = Combat()
-combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_DEATHDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MORTAREA)
-combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_SUDDENDEATH)
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
+combat:setParameter(COMBAT_PARAM_TYPE, traditional and COMBAT_PHYSICALDAMAGE or COMBAT_DEATHDAMAGE)
+-- Dedicated legacy impact: original 7.60 sprites 3244-3251, eight 100 ms frames.
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and 352 or CONST_ME_MORTAREA)
+-- Dedicated legacy death ball; modern projectile remains unchanged.
+combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, traditional and 69 or CONST_ANI_SUDDENDEATH)
 
 function onGetFormulaValues(player, level, maglevel)
+	if traditional then
+		-- Nostalrius SD: 130%-170% of level/ML power; use the caster's effective ML.
+		local base = 2 * level + 3 * maglevel
+		local factor = player:getVocation():getBaseId() == 4 and 0.30 or 1.00
+		return -1.30 * base * factor, -1.70 * base * factor
+	end
+
 	local min = (level / 5) + (maglevel * 4.605) + 28
 	local max = (level / 5) + (maglevel * 7.395) + 46
 	return -min, -max

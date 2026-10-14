@@ -25,6 +25,7 @@
     <ClInclude Include="..\src\creatures\combat\condition.hpp" />
     <ClInclude Include="..\src\creatures\combat\spells.hpp" />
     <ClInclude Include="..\src\creatures\combat\combat_mode.hpp" />
+    <ClInclude Include="..\src\creatures\combat\combat_telemetry.hpp" />
     <ClInclude Include="..\src\creatures\creature.hpp" />
     <ClInclude Include="..\src\creatures\creatures_definitions.hpp" />
     <ClInclude Include="..\src\creatures\interactions\chat.hpp" />
@@ -270,6 +271,7 @@
     <ClCompile Include="..\src\creatures\appearance\outfit\outfit.cpp" />
     <ClCompile Include="..\src\creatures\appearance\attached_effects\attached_effects.cpp" />
     <ClCompile Include="..\src\creatures\combat\combat.cpp" />
+    <ClCompile Include="..\src\creatures\combat\combat_telemetry.cpp" />
     <ClCompile Include="..\src\creatures\combat\condition.cpp" />
     <ClCompile Include="..\src\creatures\combat\spells.cpp" />
     <ClCompile Include="..\src\creatures\creature.cpp" />

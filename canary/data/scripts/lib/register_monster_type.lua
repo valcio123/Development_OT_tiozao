@@ -11,9 +11,11 @@ setmetatable(registerMonsterType, {
 })
 
 MonsterType.register = function(self, mask)
-	return registerMonsterType(self, mask)
+	-- Definitions commonly supply the name to createMonsterType only.
+	local monsterName = mask.name or self:name()
+	self:rebalanceAttackMultiplier(CreatureRebalance.attackMultiplierOverride(monsterName, mask.bosstiary ~= nil))
+	return registerMonsterType(self, CreatureRebalance.monsterDefinition(mask, monsterName))
 end
-
 registerMonsterType.name = function(mtype, mask)
 	if mask.name then
 		mtype:name(mask.name)
@@ -500,7 +502,7 @@ end
 registerMonsterType.attacks = function(mtype, mask)
 	if type(mask.attacks) == "table" then
 		for _, attack in pairs(mask.attacks) do
-			mtype:addAttack(readSpell(attack, mtype))
+			mtype:addAttack(readSpell(CreatureRebalance.attackDefinition(attack, mask.name or mtype:name()), mtype))
 		end
 	end
 end

@@ -1,77 +1,68 @@
-local skillMap = {
-	club = SKILL_CLUB,
-	sword = SKILL_SWORD,
-	axe = SKILL_AXE,
-	dist = SKILL_DISTANCE,
-	shield = SKILL_SHIELD,
-	fish = SKILL_FISHING,
+local skills = {
+    fist = SKILL_FIST, club = SKILL_CLUB, sword = SKILL_SWORD, axe = SKILL_AXE,
+    dist = SKILL_DISTANCE, distance = SKILL_DISTANCE,
+    shield = SKILL_SHIELD, shielding = SKILL_SHIELD,
+    fish = SKILL_FISHING, fishing = SKILL_FISHING,
 }
 
-local function getSkillId(skillName)
-	return skillMap[skillName:match("^%a+")] or SKILL_FIST
+local function registerSkillCommand(command, direction)
+    local action = TalkAction(command)
+    local usage = command .. " nome, level|magic|fist|club|sword|axe|distance|shielding|fishing, quantidade"
+    function action.onSay(player, words, param)
+        param = param:gsub("^%s*,%s*", "")
+        local args = param:split(",")
+        local amount = tonumber(args[3])
+        local name = args[2] and args[2]:trim():lower()
+        if #args < 2 or #args > 3 or (name ~= "level" and name ~= "magic" and skills[name] == nil) then
+            player:sendCancelMessage("Usage: " .. usage)
+            return true
+        end
+        if #args == 2 and direction == 1 then amount = 1 end
+        if not amount or amount ~= math.floor(amount) or amount < 1 or amount > 10000 then
+            player:sendCancelMessage("Quantidade deve ser um inteiro entre 1 e 10000.")
+            return true
+        end
+        local target = Player(args[1]:trim())
+        if not target then
+            player:sendCancelMessage("Player not found (must be online).")
+            return true
+        end
+        local before = name == "level" and target:getLevel() or (name == "magic" and target:getBaseMagicLevel() or target:getSkillLevel(skills[name]))
+        local minimum = name == "level" and 1 or (name == "magic" and 0 or 10)
+        local after = before + direction * amount
+        if after < minimum or after > 65534 then
+            player:sendCancelMessage("Resultado fora do limite: minimo " .. minimum .. ", maximo 65534.")
+            return true
+        end
+        logCommand(player, words, param)
+        local success
+        if name == "level" then
+            local exp = Game.getExperienceForLevel(after)
+            if direction == 1 then
+                success = target:addExperience(exp - target:getExperience(), false)
+            else
+                success = target:removeExperience(target:getExperience() - exp, false)
+            end
+        elseif name == "magic" then
+            success = target:setMagicLevel(after, 0)
+        else
+            success = target:setSkillLevel(skills[name], after, 0)
+        end
+        if not success then
+            player:sendCancelMessage("Failed to change player progression.")
+            return true
+        end
+        local actual = name == "level" and target:getLevel() or (name == "magic" and target:getBaseMagicLevel() or target:getSkillLevel(skills[name]))
+        local message = string.format("%s: %s %d -> %d (base; progress reset).", target:getName(), name, before, actual)
+        player:sendTextMessage(MESSAGE_EVENT_ADVANCE, message)
+        if target ~= player then target:sendTextMessage(MESSAGE_EVENT_ADVANCE, message) end
+        return true
+    end
+    action:separator(" ")
+    action:groupType("god")
+    action:setDescription("[Usage]: " .. usage .. " - Ajusta niveis base exatos; zera progresso parcial. Level recalcula XP, vida, mana, capacidade e velocidade.")
+    action:register()
 end
 
-local addSkill = TalkAction("/addskill")
-
-function addSkill.onSay(player, words, param)
-	-- Create log
-	logCommand(player, words, param)
-
-	if param == "" then
-		player:sendCancelMessage("Command param required.")
-		return true
-	end
-
-	local split = param:split(",")
-	if #split < 2 then
-		player:sendCancelMessage("Usage: /addskill <playername>, <skill or 'level'/'magic'>, [amount]")
-		return true
-	end
-
-	local targetPlayerName = split[1]:trim()
-	local targetPlayer = Player(targetPlayerName)
-
-	if not targetPlayer then
-		player:sendCancelMessage("Player not found.")
-		return true
-	end
-
-	local skillParam = split[2]:trim()
-	local skillIncreaseAmount = tonumber(split[3]) or 1
-	local skillPrefix = skillParam:sub(1, 1)
-
-	if skillPrefix == "l" then
-		local targetNewLevel = targetPlayer:getLevel() + skillIncreaseAmount
-		local targetNewExp = Game.getExperienceForLevel(targetNewLevel)
-		local experienceToAdd = targetNewExp - targetPlayer:getExperience()
-		local levelText = (skillIncreaseAmount > 1) and "levels" or "level"
-
-		targetPlayer:addExperience(experienceToAdd, false)
-		targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("%s has added %d %s to you.", player:getName(), skillIncreaseAmount, levelText))
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have successfully added %d %s to player %s.", skillIncreaseAmount, levelText, targetPlayer:getName()))
-	elseif skillPrefix == "m" then
-		for _ = 1, skillIncreaseAmount do
-			local requiredManaSpent = targetPlayer:getVocation():getRequiredManaSpent(targetPlayer:getBaseMagicLevel() + 1)
-			targetPlayer:addManaSpent(requiredManaSpent - targetPlayer:getManaSpent(), true)
-		end
-
-		local magicText = (skillIncreaseAmount > 1) and "magic levels" or "magic level"
-		targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("%s has added %d %s to you.", player:getName(), skillIncreaseAmount, magicText))
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have successfully added %d %s to player %s.", skillIncreaseAmount, magicText, targetPlayer:getName()))
-	else
-		local skillId = getSkillId(skillParam)
-		for _ = 1, skillIncreaseAmount do
-			local requiredSkillTries = targetPlayer:getVocation():getRequiredSkillTries(skillId, targetPlayer:getSkillLevel(skillId) + 1)
-			targetPlayer:addSkillTries(skillId, requiredSkillTries - targetPlayer:getSkillTries(skillId), true)
-		end
-
-		local skillText = (skillIncreaseAmount > 1) and "skill levels" or "skill level"
-		targetPlayer:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("%s has added %d %s %s to you.", player:getName(), skillIncreaseAmount, skillParam, skillText))
-		player:sendTextMessage(MESSAGE_EVENT_ADVANCE, string.format("You have successfully added %d %s %s to player %s.", skillIncreaseAmount, skillParam, skillText, targetPlayer:getName()))
-	end
-	return true
-end
-
-addSkill:separator(" ")
-addSkill:groupType("god")
-addSkill:register()
+registerSkillCommand("/addskill", 1)
+registerSkillCommand("/removeskill", -1)

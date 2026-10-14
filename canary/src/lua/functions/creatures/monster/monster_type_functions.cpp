@@ -24,6 +24,7 @@ void MonsterTypeFunctions::init(lua_State* L) {
 	Lua::registerMetaMethod(L, "MonsterType", "__eq", Lua::luaUserdataCompare);
 
 	Lua::registerMethod(L, "MonsterType", "isAttackable", MonsterTypeFunctions::luaMonsterTypeIsAttackable);
+	Lua::registerMethod(L, "MonsterType", "rebalanceAttackMultiplier", MonsterTypeFunctions::luaMonsterTypeRebalanceAttackMultiplier);
 	Lua::registerMethod(L, "MonsterType", "isConvinceable", MonsterTypeFunctions::luaMonsterTypeIsConvinceable);
 	Lua::registerMethod(L, "MonsterType", "isSummonable", MonsterTypeFunctions::luaMonsterTypeIsSummonable);
 	Lua::registerMethod(L, "MonsterType", "isPreyable", MonsterTypeFunctions::luaMonsterTypeIsPreyable);
@@ -229,6 +230,25 @@ int MonsterTypeFunctions::luaMonsterTypeCreate(lua_State* L) {
 		lua_pushnil(L);
 	}
 	return 1;
+}
+
+int MonsterTypeFunctions::luaMonsterTypeRebalanceAttackMultiplier(lua_State* L) {
+    const auto &monsterType = Lua::getUserdataShared<MonsterType>(L, 1, "MonsterType");
+    if (!monsterType) {
+        lua_pushnil(L);
+    } else if (lua_gettop(L) == 1) {
+        lua_pushnumber(L, monsterType->info.rebalanceAttackMultiplier);
+    } else {
+        const float value = Lua::getNumber<float>(L, 2);
+        // Reject NaN, infinity and unsupported negative values.
+        if (!(value == -1.0F || (value >= 0.0F && value <= 1000.0F))) {
+            Lua::pushBoolean(L, false);
+        } else {
+            monsterType->info.rebalanceAttackMultiplier = value;
+            Lua::pushBoolean(L, true);
+        }
+    }
+    return 1;
 }
 
 int MonsterTypeFunctions::luaMonsterTypeIsAttackable(lua_State* L) {

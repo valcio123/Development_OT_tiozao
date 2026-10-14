@@ -5,6 +5,41 @@ end
 local playerLoginGlobal = CreatureEvent("PlayerLoginGlobal")
 
 function playerLoginGlobal.onLogin(player)
+    -- New rookies start in the original Rookgaard, not Dawnport/tutorial.
+    -- The sample is migrated once; do not teleport returning rookstayers every login.
+    local rookie = player:getVocation():getId() == 0
+    local newCharacter = player:getLastLoginSaved() == 0
+    local migrateSample = player:getName():lower() == "rook sample" and not player:kv():get("classic-rook-start")
+    if rookie and (newCharacter or migrateSample) then
+        local rook = Town("Rookgaard")
+        if not rook then
+            logger.error("[ClassicRookStart] Rookgaard town missing; refusing rookie login for {}", player:getName())
+            return false
+        end
+        local temple = rook:getTemplePosition()
+        if not Tile(temple) then
+            logger.error("[ClassicRookStart] Rookgaard temple tile missing; refusing rookie login for {}", player:getName())
+            return false
+        end
+        player:setTown(rook)
+        player:teleportTo(temple)
+        -- Legacy starter equipment: fill empty slots only, never replace sample items.
+        local starter = {
+            { CONST_SLOT_ARMOR, player:getSex() == 1 and 3561 or 3562 },
+            { CONST_SLOT_RIGHT, 3270 }, -- club
+            { CONST_SLOT_LEFT, 2920 }, -- torch
+        }
+        for _, entry in ipairs(starter) do
+            if not player:getSlotItem(entry[1]) then
+                player:addItem(entry[2], 1, false, 0, entry[1])
+            end
+        end
+        if not player:getSlotItem(CONST_SLOT_BACKPACK) then
+            local bag = player:addItem(2853, 1, false, 0, CONST_SLOT_BACKPACK)
+            if bag then bag:addItem(3585, 1) end -- red apple
+        end
+        player:kv():set("classic-rook-start", true)
+    end
 	-- Welcome
 	local loginStr
 	if player:getLastLoginSaved() == 0 then

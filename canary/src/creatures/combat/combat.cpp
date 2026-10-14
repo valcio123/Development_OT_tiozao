@@ -876,6 +876,7 @@ void Combat::CombatHealthFunc(const std::shared_ptr<Creature> &caster, const std
 	}
 
 	if (g_game().combatBlockHit(damage, caster, target, params.blockedByShield, params.blockedByArmor, params.itemId != 0)) {
+		g_game().combatTelemetry().impact("blocked", caster, target, damage, 0, 0);
 		return;
 	}
 

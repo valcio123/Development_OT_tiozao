@@ -399,6 +399,7 @@ ReturnValue Actions::internalUseItem(const std::shared_ptr<Player> &player, cons
 }
 
 bool Actions::useItem(const std::shared_ptr<Player> &player, const Position &pos, uint8_t index, const std::shared_ptr<Item> &item, bool isHotkey) {
+	CombatTelemetry::Scope telemetry(g_game().combatTelemetry(), player, item->getName(), "item", 0, item->getID(), 0);
 	if (!CombatMode::isItemAvailable(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), item->getID())) {
 		player->sendTraditionalItemUnavailable(item->getID());
 		return false;
@@ -432,10 +433,12 @@ bool Actions::useItem(const std::shared_ptr<Player> &player, const Position &pos
 	if (it.isMultiUse()) {
 		player->sendUseItemCooldown(g_configManager().getNumber(ACTIONS_DELAY_INTERVAL));
 	}
+	telemetry.finish(true);
 	return true;
 }
 
 bool Actions::useItemEx(const std::shared_ptr<Player> &player, const Position &fromPos, const Position &toPos, uint8_t toStackPos, const std::shared_ptr<Item> &item, bool isHotkey, const std::shared_ptr<Creature> &creature /* = nullptr*/) {
+	CombatTelemetry::Scope telemetry(g_game().combatTelemetry(), player, item->getName(), "item", 0, item->getID(), 0);
 	if (!CombatMode::isItemAvailable(g_configManager().getBoolean(MODERN_COMBAT_SYSTEM), item->getID())) {
 		player->sendTraditionalItemUnavailable(item->getID());
 		return false;
@@ -468,6 +471,7 @@ bool Actions::useItemEx(const std::shared_ptr<Player> &player, const Position &f
 
 	if (action->useFunction) {
 		if (action->useFunction(player, item, fromPos, action->getTarget(player, creature, toPos, toStackPos), toPos, isHotkey)) {
+			telemetry.finish(true);
 			return true;
 		}
 		return false;
@@ -489,6 +493,7 @@ bool Actions::useItemEx(const std::shared_ptr<Player> &player, const Position &f
 	if (it.isMultiUse()) {
 		player->sendUseItemCooldown(g_configManager().getNumber(EX_ACTIONS_DELAY_INTERVAL));
 	}
+	telemetry.finish(true);
 	return true;
 }
 

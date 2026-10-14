@@ -131,6 +131,9 @@ function mapController:onGameStart()
     end
 
     self.ui.minimapBorder.minimap:load()
+    -- Index bundled map images; visible textures are loaded lazily.
+    g_satelliteMap.loadFloors(string.format('/data/things/%d', g_game.getClientVersion()), 0, 15)
+    self.ui.minimapBorder.minimap:setUseStaticMinimap(true)
 end
 
 function mapController:onGameEnd()

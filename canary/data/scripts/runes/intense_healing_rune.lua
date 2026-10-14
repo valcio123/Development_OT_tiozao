@@ -1,4 +1,5 @@
 local combat = Combat()
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_HEALING)
 combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MAGIC_BLUE)
 combat:setParameter(COMBAT_PARAM_AGGRESSIVE, 0)
@@ -6,6 +7,11 @@ combat:setParameter(COMBAT_PARAM_TARGETCASTERORTOPMOST, 1)
 combat:setParameter(COMBAT_PARAM_DISPEL, CONDITION_PARALYZE)
 
 function onGetFormulaValues(player, level, maglevel)
+	if traditional then
+		-- Classic IH: base 70 +/- 30, with minimum magic power of 100.
+		local power = math.max(100, 2 * level + 3 * maglevel)
+		return 0.40 * power, power
+	end
 	local min = (level / 5) + (maglevel * 3.2) + 20
 	local max = (level / 5) + (maglevel * 5.4) + 40
 	return min, max

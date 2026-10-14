@@ -551,10 +551,10 @@ function Player:onGainExperience(target, exp, rawExp)
 	-- Stamina Bonus
 	local staminaBonusXp = 1
 	if configManager.getBoolean(configKeys.STAMINA_SYSTEM) then
-		useStamina(self, true)
+		useStamina(self, self:hasRookieExperienceBonuses())
 		staminaBonusXp = self:getFinalBonusStamina()
-		self:setStaminaXpBoost(staminaBonusXp * 100)
 	end
+	self:setStaminaXpBoost(staminaBonusXp * 100)
 
 	-- Concoction System
 	useConcoctionTime(self)

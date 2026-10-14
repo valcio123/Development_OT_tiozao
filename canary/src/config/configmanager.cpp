@@ -45,6 +45,8 @@ bool ConfigManager::load() {
 		loadBoolConfig(L, OLD_PROTOCOL, "allowOldProtocol", true);
 		// Startup-only: change combat rules with a controlled restart.
 		loadBoolConfig(L, MODERN_COMBAT_SYSTEM, "modernCombatSystem", true);
+		loadBoolConfig(L, COMBAT_TELEMETRY_ENABLED, "combatTelemetryEnabled", false);
+		loadStringConfig(L, COMBAT_TELEMETRY_PLAYERS, "combatTelemetryPlayers", "");
 		loadBoolConfig(L, OPTIMIZE_DATABASE, "startupDatabaseOptimization", true);
 		loadBoolConfig(L, RANDOM_MONSTER_SPAWN, "randomMonsterSpawn", false);
 		loadBoolConfig(L, RESET_SESSIONS_ON_STARTUP, "resetSessionsOnStartup", false);

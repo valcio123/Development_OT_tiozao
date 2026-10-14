@@ -1,3 +1,9 @@
+local function hasHotkeyAction(settings)
+    return settings and ((tonumber(settings.itemId) or 0) > 0 or
+        (tonumber(settings.action) or 0) > 0 or
+        (settings.value ~= nil and tostring(settings.value) ~= ""))
+end
+
 HOTKEY_MANAGER_USE = nil
 HOTKEY_MANAGER_USEONSELF = 1
 HOTKEY_MANAGER_USEONTARGET = 2
@@ -301,6 +307,9 @@ function save()
     table.clear(hotkeys)
 
     for _, child in pairs(currentHotkeys:getChildren()) do
+        if hasHotkeyAction(child) and modules.game_actionbar and modules.game_actionbar.removeHotkeyFromActionBar then
+            modules.game_actionbar.removeHotkeyFromActionBar(child.keyCombo)
+        end
         hotkeys[child.keyCombo] = {
             autoSend = child.autoSend,
             itemId = child.itemId,
@@ -432,6 +441,7 @@ function addHotkey()
     assignWindow.onKeyDown = hotkeyCapture
 end
 
+
 function addKeyCombo(keyCombo, keySettings, focus)
     if keyCombo == nil or #keyCombo == 0 then
         return
@@ -439,7 +449,7 @@ function addKeyCombo(keyCombo, keySettings, focus)
     if not keyCombo then
         return
     end
-    if modules.game_actionbar and modules.game_actionbar.removeHotkeyFromActionBar then
+    if hasHotkeyAction(keySettings) and modules.game_actionbar and modules.game_actionbar.removeHotkeyFromActionBar then
         modules.game_actionbar.removeHotkeyFromActionBar(keyCombo)
     end
     local hotkeyLabel = currentHotkeys:getChildById(keyCombo)
@@ -509,7 +519,7 @@ function doKeyCombo(keyCombo)
         return
     end
     local hotKey = hotkeyList[keyCombo]
-    if not hotKey then
+    if not hasHotkeyAction(hotKey) then
         return
     end
 
@@ -1023,14 +1033,6 @@ function isHotkeyUsedByManager(keyCombo)
     if not keyCombo or keyCombo == "" then
         return false
     end
-    if boundCombosCallback[keyCombo] then
-        return true
-    end
-    if currentHotkeys then
-        local hotkeyLabel = currentHotkeys:getChildById(keyCombo)
-        if hotkeyLabel then
-            return true
-        end
-    end
-    return false
+    local hotkeyLabel = currentHotkeys and currentHotkeys:getChildById(keyCombo)
+    return hasHotkeyAction(hotkeyLabel) and true or false
 end

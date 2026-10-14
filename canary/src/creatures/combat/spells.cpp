@@ -1201,6 +1201,7 @@ void Spell::setLockedPZ(bool b) {
 InstantSpell::InstantSpell() = default;
 
 bool InstantSpell::playerCastInstant(const std::shared_ptr<Player> &player, std::string &param) const {
+	CombatTelemetry::Scope telemetry(g_game().combatTelemetry(), player, getName(), "spell", getSpellId(), 0, getManaCost(player));
 	if (!playerSpellCheck(player)) {
 		return false;
 	}
@@ -1321,6 +1322,7 @@ bool InstantSpell::playerCastInstant(const std::shared_ptr<Player> &player, std:
 	}
 
 	bool result = executeCastSpell(player, var);
+	telemetry.finish(result);
 	if (result) {
 		postCastSpell(player);
 	}
@@ -1534,6 +1536,7 @@ std::shared_ptr<Thing> RuneSpell::getTarget(const std::shared_ptr<Player> &, con
 }
 
 bool RuneSpell::executeUse(const std::shared_ptr<Player> &player, const std::shared_ptr<Item> &item, const Position &, const std::shared_ptr<Thing> &target, const Position &toPosition, bool isHotkey) {
+	CombatTelemetry::Scope telemetry(g_game().combatTelemetry(), player, getName(), "rune", getSpellId(), item ? item->getID() : 0, getManaCost(player));
 	if (!playerRuneSpellCheck(player, toPosition)) {
 		return false;
 	}
@@ -1577,6 +1580,7 @@ bool RuneSpell::executeUse(const std::shared_ptr<Player> &player, const std::sha
 		return false;
 	}
 
+	telemetry.finish(true);
 	postCastSpell(player);
 	if (hasCharges && item && g_configManager().getBoolean(REMOVE_RUNE_CHARGES)) {
 		int32_t newCount = std::max<int32_t>(0, item->getItemCount() - 1);

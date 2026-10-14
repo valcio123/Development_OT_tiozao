@@ -1,11 +1,16 @@
 local combat = Combat()
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_FIREDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_FIREATTACK)
-combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_FIRE)
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and 356 or CONST_ME_FIREATTACK)
+combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, traditional and 70 or CONST_ANI_FIRE)
 
 function onGetFormulaValues(player, level, maglevel)
 	local min = (level / 5) + (maglevel * 1.403) + 8
 	local max = (level / 5) + (maglevel * 2.203) + 13
+	if traditional then
+		-- User balance: reduce both bounds of the current Canary formula by 20%.
+		return -min * 0.80, -max * 0.80
+	end
 	return -min, -max
 end
 

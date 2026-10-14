@@ -3026,6 +3026,11 @@ C++ Lua binding handlers and registration lines can override inferred signatures
 - Returns: `boolean|number|nil`
 - Source: `src/lua/functions/creatures/monster/monster_type_functions.cpp`
 
+#### `MonsterType:rebalanceAttackMultiplier(value?: number)`
+
+- Returns: `boolean|number|nil`
+- Source: `src/lua/functions/creatures/monster/monster_type_functions.cpp`
+
 #### `MonsterType:registerEvent(name: string)`
 
 - Returns: `boolean|nil`

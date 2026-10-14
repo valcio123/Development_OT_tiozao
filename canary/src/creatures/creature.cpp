@@ -141,7 +141,8 @@ void Creature::onThink(uint32_t interval) {
 
 	blockTicks += interval;
 	if (blockTicks >= 1000) {
-		blockCount = std::min<uint32_t>(blockCount + 1, 2);
+		// Players can defend against three incoming hits; replenish at the original rate.
+		blockCount = std::min<uint32_t>(blockCount + 1, getPlayer() ? 3 : 2);
 		blockTicks = 0;
 	}
 
@@ -855,6 +856,7 @@ void Creature::changeHealth(int32_t healthChange, bool sendHealthChange /* = tru
 		health = std::max<int32_t>(0, health + healthChange);
 	}
 
+	g_game().combatTelemetry().health(static_self_cast<Creature>(), oldHealth, health);
 	if (sendHealthChange && oldHealth != health) {
 		g_game().addCreatureHealth(static_self_cast<Creature>());
 	}
@@ -876,11 +878,13 @@ void Creature::changeHealth(int32_t healthChange, bool sendHealthChange /* = tru
 }
 
 void Creature::changeMana(int32_t manaChange) {
+	const auto telemetryManaBefore = mana;
 	if (manaChange > 0) {
 		mana += std::min<int32_t>(manaChange, getMaxMana() - mana);
 	} else {
 		mana = std::max<int32_t>(0, mana + manaChange);
 	}
+	g_game().combatTelemetry().mana(static_self_cast<Creature>(), telemetryManaBefore, mana);
 }
 
 void Creature::gainHealth(const std::shared_ptr<Creature> &healer, int32_t healthGain) {

@@ -1,11 +1,16 @@
 local combat = Combat()
+local traditional = not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM)
 combat:setParameter(COMBAT_PARAM_TYPE, COMBAT_DEATHDAMAGE)
-combat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_MORTAREA)
-combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_DEATH)
+combat:setParameter(COMBAT_PARAM_EFFECT, traditional and 352 or CONST_ME_MORTAREA)
+combat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, traditional and 69 or CONST_ANI_DEATH)
 
 function onGetFormulaValues(player, level, maglevel)
 	local min = (level / 5) + (maglevel * 1.403) + 8
 	local max = (level / 5) + (maglevel * 2.203) + 13
+	if traditional then
+		-- User balance: reduce both bounds of the current Canary formula by 20%.
+		return -min * 0.80, -max * 0.80
+	end
 	return -min, -max
 end
 

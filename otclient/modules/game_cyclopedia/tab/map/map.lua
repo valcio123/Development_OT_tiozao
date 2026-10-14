@@ -16,7 +16,7 @@ local function ensureViewFloorsLoaded()
 
     -- Reset when switching game versions
     if assetsDir ~= loadedAssetsDir then
-        g_satelliteMap.clear()
+        -- loadFloors resets on version changes; preserve the HUD floor index.
         loadedFloorSet = {}
         loadedAssetsDir = assetsDir
     end

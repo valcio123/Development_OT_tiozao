@@ -7,6 +7,8 @@ target_sources(
             combat/condition.cpp
             combat/spells.cpp
             combat/combat_mode.hpp
+            combat/combat_telemetry.hpp
+            combat/combat_telemetry.cpp
             creature.cpp
             interactions/chat.cpp
             monsters/monster.cpp

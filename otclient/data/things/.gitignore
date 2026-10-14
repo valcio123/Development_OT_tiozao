@@ -1,3 +1,34 @@
 *
 !.gitignore
 !README.md
+
+# Custom traditional effects required by the active 15.25 catalog.
+!1525/
+!1525/catalog-content.json
+!1525/appearances-7790d80213bdb1d91a4b82ba02b6fc9be70bed12ae375049f7a5a31ba7eb60f8.dat
+!1525/sprites-76f81fa1c831689547436a07462355783a7e5808ede663d1257e0a407ec66897.bmp.lzma
+!1525/sprites-32eff17fdd4b37728b5b6bda83ab3a2814f36208ea440c59be165a88cb8154e8.bmp.lzma
+!1525/sprites-a97cb0a4dc6e8be198532fcd2b96aa240bd145d5cdda7d8818eacd486cb694ea.bmp.lzma
+!1525/sprites-8ddfe332349779c24ea6162d187ed29d9fcf5bc589de92a9446ca5bf51f73a4f.bmp.lzma
+!1525/sprites-31b27946839b7d581cc49fc6f88cccd44df50e5b774cc4dc6968bb3b3efb5482.bmp.lzma
+
+# Legacy SD projectile and active appearance catalog.
+!1525/appearances-f5247604a84ec8b5e5f926dd96e6798b63054f28fcd81d5ab4391c5e1cf94f51.dat
+!1525/sprites-8eb01d80d6b21d461494846115aeaa9aa401f5e2e5e22093978ebb54d8544bc9.bmp.lzma
+!1525/appearances-180719da3a9cbf84b1c51290e47cd62350a1784b4a455f6a7547b24b5a935cc7.dat
+
+# Legacy Explosion projectile and active appearance catalog.
+!1525/appearances-5e3ea77bf8ae26b27a631104a88646bef10bfed899238fb6ea8a741e7e37cb7d.dat
+!1525/sprites-24e7c5ffecc64899edbcec74ebe06d8862d3868a94936cd36696c72eb9e05c56.bmp.lzma
+
+# Traditional HMM and strike assets.
+!1525/appearances-23f3d51f921dd78f9c5ac8b90a53022b34e59f711e08aa3e8ecbad90a0632a89.dat
+!1525/sprites-650ebbc34b3f310d83bdcb539b7c38aa3f5f1e74a1b35ba35cf80f4a55308728.bmp.lzma
+
+# Corrected legacy HMM shock impact.
+!1525/appearances-c02f0b52aef572f8462c0d8e6be969af6e00f305c444ca8b0c6896cf9b0811bc.dat
+!1525/sprites-d49f08f6e95341b2bc1afe37214843949b44e67062f8b3ad8810bafeeae74c17.bmp.lzma
+
+# Original 760 Energy Wave and Fire Wave assets.
+!1525/appearances-74160e2d4becb85492e97a7b8e19f4ace0a8fb02fd42d64521eb407163891830.dat
+!1525/sprites-8d5e30fb7815aa3a547ddf57251ba11c87f8af8da35038a15b4e6bc48c5c6e0c.bmp.lzma

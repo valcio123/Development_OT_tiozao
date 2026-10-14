@@ -1156,19 +1156,26 @@ local function formatTime(minutes)
     return hours .. ':' .. mins
 end
 
+local function hasRookieExperienceBonuses(player)
+    return player and (player:getLevel() < 8 or player:getVocation() == 0)
+end
+
 local function getStaminaTooltip(hours, minutes, stamina)
     local timeText = tr('You have %s hours and %s minutes left', hours, minutes)
+    if not hasRookieExperienceBonuses(g_game.getLocalPlayer()) then
+        return timeText .. '\nStamina XP multiplier: 100%. Stamina bonuses and penalties apply only below level 8 or without a vocation.'
+    end
     
-    if stamina > 2400 and g_game.getClientVersion() >= 1038 then
+    if stamina > 2340 and g_game.getClientVersion() >= 1038 then
         local player = g_game.getLocalPlayer()
         if player:isPremium() then
             return timeText .. '\n' .. tr('Now you will gain 50%% more experience')
         else
             return timeText .. '\n' .. tr('You will not gain 50%% more experience because you aren\'t premium player, now you receive only 1x experience points')
         end
-    elseif stamina >= 2400 and g_game.getClientVersion() < 1038 then
+    elseif stamina > 2340 and g_game.getClientVersion() < 1038 then
         return timeText .. '\n' .. tr('If you are premium player, you will gain 50%% more experience')
-    elseif stamina < 2400 and stamina > 840 then
+    elseif stamina <= 2340 and stamina > 840 then
         return timeText
     elseif stamina <= 840 and stamina > 0 then
         return timeText .. '\n' .. tr('You gain only 50%% experience and you don\'t may gain loot from monsters')
@@ -1188,7 +1195,9 @@ function onStaminaChange(localPlayer, stamina)
     local tooltip = getStaminaTooltip(hours, minutes, stamina)
     local color = 'orange'
     
-    if stamina > 2400 then
+    if not hasRookieExperienceBonuses(localPlayer) then
+        color = "#C0C0C0"
+    elseif stamina > 2340 then
         color = g_game.getClientVersion() >= 1038 and localPlayer:isPremium() and 'green' or '#89F013'
     elseif stamina <= 840 and stamina > 0 then
         color = 'red'
@@ -1316,8 +1325,10 @@ local function updateExperienceRate(localPlayer)
         tooltip = tooltip .. string.format("\n- Low Level Bonus: %d%%", ExpRating[ExperienceRate.LOW_LEVEL])
     end
 
-    tooltip = tooltip .. string.format("\n- Stamina multiplier: x%.1f (%s h remaining)", staminaMultiplier / 100,
-        formatTimeByMinutes(localPlayer:getStamina() - 2340))
+    tooltip = tooltip .. string.format("\n- Stamina multiplier: %d%%", staminaMultiplier)
+    if staminaMultiplier > 100 then
+        tooltip = tooltip .. string.format(" (%s h remaining)", formatTimeByMinutes(math.max(0, localPlayer:getStamina() - 2340)))
+    end
 
     xpgainrate:setTooltip(tooltip)
 

@@ -282,3 +282,101 @@ O teste de política cobre a separação para runas e a preservação dos demais
 # Traditional ultimate spells: mana and ED damage
 
 Rage of the Skies and Wrath of Nature cost a fixed 1200 mana in traditional mode, without Wheel mana discounts. Wrath of Nature is available through the central spell policy. For equal level and magic level its damage limits are 70% of Rage of the Skies: minimum `1.582 * (2L + 3ML)`, maximum `2.373 * (2L + 3ML)`. This applies to Mas Tera only; other ED spells have not been rebalanced. Modern damage, availability and registered mana costs (600/700) are preserved.
+
+## SD tradicional: formula e efeito antigo (2026-10-14)
+
+Somente no modo tradicional, Sudden Death usa dano fisico e a formula do
+[Nostalrius](https://github.com/Ezzz-dev/Nostalrius/blob/master/data/spells/scripts/runes/sudden%20death.lua):
+base = 2 * level + 3 * ML efetiva; minimo = 1.30 * base; maximo = 1.70 * base.
+Knight e Elite Knight recebem fator 0.30 sobre ambos os limites. A ML e a do
+personagem, sem substituicao, piso ou teto de ML 15. Os requisitos existentes
+da runa permanecem (level 45 e ML 15); a formula nao concede acesso a runa.
+Exemplo EK level 300/ML 15: 251.55-328.95 (media teorica 290.25).
+Como no script de referencia, o tipo fisico nao ativa bloqueio por armor/shield
+no Combat; protecoes percentuais fisicas continuam seguindo o motor normal.
+
+O impacto usa efeito novo 352 com sprites novos 290344-290351 no cliente 15.25.
+Sao os oito sprites originais 3244-3251 de Tibia 7.60, confirmados contra
+effect_18.otobj. Duracao: oito quadros de 100 ms (800 ms). Efeitos existentes,
+incluindo GFB/Mas Vis e o efeito moderno 18, foram preservados byte a byte.
+O projetil atual permanece; esta importacao trata somente do impacto.
+A ferramenta otclient/tools/import_legacy_sd_effect.py importa a partir de
+Tibia.spr e verifica os quadros contra o objeto exportado, alocando IDs livres.
+
+Modo moderno conserva formula, elemento e efeito anteriores. Validacao:
+tests/lua/traditional_sd_test.lua executa o callback real nos dois modos.
+Instalacao dos assets e Lua no repositorio ativo nao recarrega processos ja
+abertos: reiniciar Canary de forma controlada e reiniciar o OTClient antes do
+teste visual. Sem commit ate o usuario testar e confirmar.
+
+### SD: projétil antigo (substitui a preservação do projétil acima)
+O projétil tradicional passa do moderno 32 para o novo ID 69. A origem é
+missile_11.otobj / CONST_ANI_DEATH da versão 760: sprite 3252 nos oito
+padrões direcionais e imagem vazia no padrão central. Verificado contra
+Tibia.spr. Os novos sprites são 290488-290496; patterns 3x3, uma fase.
+Ferramenta: otclient/tools/import_legacy_sd_missile.py. O catálogo ativo
+inclui tanto o impacto 352 quanto o projétil 69. Nenhum missile antigo foi
+substituído, e no modo moderno a SD conserva CONST_ANI_SUDDENDEATH (32).
+Teste Lua valida a seleção do projétil nos dois modos; teste visual pendente.
+
+## Explosion tradicional (2026-10-14)
+Minimo = 0.20 * (2L + 3ML); maximo = 2L + 3ML, sem fator de classe. Moderno preservado. Efeito exclusivo 353, derivado do Mas Vis antigo 351 com 15 fases e duracao total 800 ms (53/54 ms por fase). Reutiliza sprites existentes sem substituir IDs. Area, projetil, requisitos, cooldown e bloqueio por armadura preservados. Sem commit; teste no jogo pendente.
+
+Explosion: projetil tradicional corrigido para ID novo 70, importado do missile 4 (CONST_ANI_FIRE) da versao 760, sprites originais 1830-1837. Sprites novos 290632-290640, centro transparente. Moderno mantem CONST_ANI_EXPLOSION. Referencia: Nostalrius data/spells/scripts/runes/explosion.lua. Sem commit; reiniciar Canary e cliente para testar.
+
+
+## IH, HMM and single-target strikes (2026-10-14)
+
+Only traditional mode changes. For P = max(100, 2 * level + 3 * effective ML):
+- IH healing: minimum 0.40 * P, maximum P (base 70 +/- 30).
+- HMM energy damage: minimum 0.20 * P, maximum 0.40 * P (base 30 +/- 10).
+- Exori Vis/Mort/Flam: multiply BOTH current Canary bounds by 0.80.
+  Minimum = 0.80 * (level/5 + 1.403*ML + 8).
+  Maximum = 0.80 * (level/5 + 2.203*ML + 13).
+  This does not modify the Knight's Berserk/Exori formula.
+
+Sources: OTHire commit 43d3b1f3c83675451756d3e20064f1476e3ac7d0 for
+classic bounds and floors; Nostalrius data/spells/scripts/runes/heavy magic
+missile.lua for the HMM visual (energy projectile + explosion hit).
+OTHire has a different fire projectile; the chosen Nostalrius visual combines
+the legacy blue energy projectile and fiery impact while keeping energy damage.
+No class multiplier was added to IH/HMM. Modern formulas/visuals, vocations,
+levels, ML requirements, rune charges, mana, range and cooldowns remain as before.
+Mort retains Canary's death damage type; the requested change is visual only.
+
+| Action | Traditional impact | Traditional projectile |
+| --- | --- | --- |
+| Exori Vis | 354: legacy 760 effect 11, 8 x 100 ms | 71: legacy missile 5 |
+| Exori Mort | 352: previously imported legacy effect 18 | 69: legacy missile 11 |
+| Exori Flam | 356: copy of custom GFB effect 350, 15 frames, 800 ms | 70: legacy missile 4 |
+| HMM | 355: legacy effect 6, 6 x 100 ms | 71: legacy missile 5 |
+
+New sprites 290776-290798 match the visible pixels of Tibia.spr 760.
+Existing client effects and missiles were retained byte-for-byte. Server
+appearances.dat receives only missing effect/missile records; existing items,
+outfits and visuals are retained. The active client catalog and Git exceptions
+include the new appearance and sheet. Importer: otclient/tools/import_legacy_strikes.py.
+
+Test: tests/lua/traditional_ih_hmm_strikes_test.lua checks real callbacks in
+both modes, the low-level floors, effective ML profiles, visual selection,
+single combat execution and original metadata. Visual gameplay test pending;
+restart Canary and OTClient to load these files. No commit until user testing.
+At level 50/ML45, Exori's reduced mean is 81.31 vs old HMM 70.5; the chosen
+20% reduction does not make HMM stronger at every level/ML combination.
+
+Exori Mort: Death Strike explicitly added to the central traditional allowlist; existing vocation restrictions retained. Requires updated executable.
+
+### HMM visual correction (2026-10-14)
+User correction supersedes the previous HMM visual: traditional HMM now uses legacy fire projectile 70 (missile 4/760) and new shock effect 357 (effect 12/760). Original sprites 330/331, original four-frame sequence [330, 331, 330, 331], 100 ms per phase, 400 ms total. New sprites 290920-290923. Formula, energy damage and modern behavior unchanged. Client/server metadata synchronized; no commit. Restart Canary and OTClient to test.
+
+HMM impact correction: traditional HMM retains shock effect 357 and fire projectile 70, and adds GFB explosion effect 350 on the same target tile via CALLBACK_PARAM_TARGETCREATURE. Visual overlay only: one combat execution, no second damage instance or additional area damage. Modern mode unchanged. Server metadata now registers effect 350 too. Lua tests cover combined visuals and no extra damage/mode leakage. No commit; restart Canary to load Lua/server metadata.
+
+### Rookie XP, waves and client defaults (2026-10-14)
+- Stamina XP and low-level XP bonuses apply only at level < 8 OR vocation 0. Other characters use 100% stamina XP, do not consume stamina on kills, and retain loot/XP even with previously depleted stamina. Stored stamina hours are preserved. Server getters enforce the displayed values; skills/Cyclopedia use the same policy.
+- Traditional Summon Creature is nonaggressive and trims its monster parameter. Summonability, mana, room and two-summon limits remain enforced. Usage: utevo res "Monk" (requires the existing level/vocation and monster mana cost).
+- Traditional waves: P=max(100,2*level+3*effectiveML). Energy Wave bounds=P..2P; Fire Wave=.2P...4P. Nostalrius provides coefficients; OTHire supplies the historical floor. Modern formulas, spell mana and requirements remain unchanged. No flying missile for either traditional wave.
+- Nostalrius sources: https://github.com/Ezzz-dev/Nostalrius/blob/master/data/spells/scripts/spells/energy%20wave.lua and fire%20wave.lua. Floor reference: https://github.com/Ezzz-dev/OTHire/commit/43d3b1f3c83675451756d3e20064f1476e3ac7d0.
+- Legacy wave effects appended as 358 (760 effect 11, 8 frames/800ms) and 359 (760 effect 16, 5 frames/500ms); existing appearance IDs preserved. Importer: otclient/tools/import_legacy_waves.py.
+- Empty Ctrl+K placeholders no longer remove actionbar hotkeys. Missing F1-F12 defaults restored for first bar, respecting existing actions, occupied keys and deliberate clearing. F10 button IDs remain strings to avoid clearing F1.
+- HUD minimap indexes bundled map imagery for floors 0-15 at login and enables static minimap rendering. Textures load lazily. Cyclopedia preserves the shared floor index. This reveals bundled map graphics, not server tile/pathfinding knowledge or custom areas missing from the bundled maps.
+- Validation: 312 spell scripts syntax checked; real wave/summon callbacks and rookie XP tests pass; existing IH/HMM/SD/UH/area-rune/Exori tests pass; actionbar cooldown and client-default regression tests pass. Gameplay/visual validation remains with the user; no commit or push.

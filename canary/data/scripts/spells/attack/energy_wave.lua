@@ -1,4 +1,8 @@
 local function formulaFunction(player, level, maglevel)
+	if not configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM) then
+		local power = math.max(100, 2 * level + 3 * maglevel)
+		return -power, -2 * power
+	end
 	local min = (level / 5) + (maglevel * 4.5)
 	local max = (level / 5) + (maglevel * 9)
 	return -min, -max
@@ -16,8 +20,13 @@ local function createCombat(area, areaDiagonal, combatFunc)
 	local initCombat = Combat()
 	initCombat:setCallback(CALLBACK_PARAM_LEVELMAGICVALUE, combatFunc)
 	initCombat:setParameter(COMBAT_PARAM_TYPE, COMBAT_ENERGYDAMAGE)
-	initCombat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYAREA)
-	initCombat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ENERGY)
+	if configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM) then
+		initCombat:setParameter(COMBAT_PARAM_EFFECT, CONST_ME_ENERGYAREA)
+		initCombat:setParameter(COMBAT_PARAM_DISTANCEEFFECT, CONST_ANI_ENERGY)
+	else
+		-- Legacy wave lights each affected tile; no flying projectile.
+		initCombat:setParameter(COMBAT_PARAM_EFFECT, 358)
+	end
 	initCombat:setArea(createCombatArea(area, areaDiagonal))
 	return initCombat
 end
@@ -30,7 +39,7 @@ local spell = Spell("instant")
 function spell.onCastSpell(creature, var)
 	local player = creature:getPlayer()
 	if creature and player then
-		if player:getWheelSpellAdditionalArea("Energy Wave") then
+		if configManager.getBoolean(configKeys.MODERN_COMBAT_SYSTEM) and player:getWheelSpellAdditionalArea("Energy Wave") then
 			return combatWOD:execute(creature, var)
 		end
 	end

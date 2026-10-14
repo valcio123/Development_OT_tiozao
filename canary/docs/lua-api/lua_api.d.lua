@@ -2383,6 +2383,10 @@ function MonsterType:race(race) end
 ---@return boolean|number|nil
 function MonsterType:raceId(arg2) end
 
+---@param value? number
+---@return boolean|number|nil
+function MonsterType:rebalanceAttackMultiplier(value) end
+
 ---@param name string
 ---@return boolean|nil
 function MonsterType:registerEvent(name) end

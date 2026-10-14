@@ -1,5 +1,7 @@
 math.randomseed(os.time())
 
+dofile("data/libs/functions/creature_rebalance.lua")
+
 dofile(DATA_DIRECTORY .. "/lib/lib.lua")
 local startupFile = io.open(DATA_DIRECTORY .. "/startup/startup.lua", "r")
 if startupFile ~= nil then
